@@ -1,5 +1,7 @@
 import { Audio, Video } from "@remotion/media";
 import {
+  AbsoluteFill,
+  type InteractiveTransformProps,
   CanvasImage,
   Interactive,
   interpolate,
@@ -9,12 +11,12 @@ import {
 } from "remotion";
 import { BasicCaptions } from "./basic-captions";
 
-const FlightCrewSceneContent = () => {
+const FlightCrewSceneContent = ({ style }: InteractiveTransformProps) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   return (
-    <>
+    <AbsoluteFill style={style}>
       <Audio
         name="Normalized flight crew"
         src={staticFile("audio/flight-crew-normalized.wav")}
@@ -204,7 +206,7 @@ const FlightCrewSceneContent = () => {
           },
         ]}
       />
-    </>
+    </AbsoluteFill>
   );
 };
 
@@ -213,5 +215,4 @@ export const FlightCrewScene = Interactive.withSchema({
   componentName: "FlightCrewScene",
   schema: {},
   wrapInSequence: true,
-  layout: "absolute-fill",
 });

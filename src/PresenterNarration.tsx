@@ -1,14 +1,20 @@
 import { Audio, Video } from "@remotion/media";
-import { Interactive, staticFile, useVideoConfig } from "remotion";
+import {
+  AbsoluteFill,
+  type InteractiveTransformProps,
+  Interactive,
+  staticFile,
+  useVideoConfig,
+} from "remotion";
 import { BasicCaptions } from "./basic-captions";
 import { PlaneSightLogo } from "./PlaneSightLogo";
 import { EightAgentsIntro } from "./EightAgentsIntro";
 
-const PresenterNarrationContent = () => {
+const PresenterNarrationContent = ({ style }: InteractiveTransformProps) => {
   const { fps } = useVideoConfig();
 
   return (
-    <>
+    <AbsoluteFill style={style}>
       <Audio
         name="Normalized narration"
         src={staticFile("audio/presenter-normalized.wav")}
@@ -1564,7 +1570,7 @@ const PresenterNarrationContent = () => {
           },
         ]}
       />
-    </>
+    </AbsoluteFill>
   );
 };
 
@@ -1573,5 +1579,4 @@ export const PresenterNarration = Interactive.withSchema({
   componentName: "PresenterNarration",
   schema: {},
   wrapInSequence: true,
-  layout: "absolute-fill",
 });

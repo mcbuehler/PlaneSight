@@ -10,20 +10,20 @@
   "private": true,
   "dependencies": {
     "@huggingface/transformers": "4.2.0",
-    "@mediabunny/server": "1.61.3",
-    "@remotion/captions": "file:../remotion/packages/captions",
-    "@remotion/cli": "file:../remotion/packages/cli",
-    "@remotion/media": "file:../remotion/packages/media",
-    "@remotion/tailwind-v4": "file:../remotion/packages/tailwind-v4",
-    "@remotion/whisper-webgpu": "file:../remotion/packages/whisper-webgpu",
-    "mediabunny": "1.61.3",
+    "@mediabunny/server": "1.56.1",
+    "@remotion/captions": "4.0.534",
+    "@remotion/cli": "4.0.534",
+    "@remotion/media": "4.0.534",
+    "@remotion/tailwind-v4": "4.0.534",
+    "@remotion/whisper-webgpu": "4.0.534",
+    "mediabunny": "1.56.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "remotion": "file:../remotion/packages/core",
+    "remotion": "4.0.534",
     "tailwindcss": "4.0.0"
   },
   "devDependencies": {
-    "@remotion/eslint-config-flat": "file:../remotion/packages/eslint-config-flat",
+    "@remotion/eslint-config-flat": "4.0.534",
     "@types/react": "19.2.7",
     "@types/web": "0.0.166",
     "eslint": "9.39.5",
@@ -43,6 +43,5 @@
   },
   "sideEffects": [
     "*.css"
-  ],
-  "_remotionInternalPackageRoot": "../remotion"
+  ]
 }

@@ -1,4 +1,6 @@
 import {
+  AbsoluteFill,
+  type InteractiveTransformProps,
   CanvasImage,
   Easing,
   Interactive,
@@ -698,11 +700,11 @@ const AirportTraffic = () => {
   );
 };
 
-const PixelAirportContent = () => {
+const PixelAirportContent = ({ style }: InteractiveTransformProps) => {
   const { fps } = useVideoConfig();
 
   return (
-    <>
+    <AbsoluteFill style={style}>
       <Interactive.Div
         name="Airport backdrop"
         style={{ position: "absolute", inset: 0, backgroundColor: "#527347" }}
@@ -736,7 +738,7 @@ const PixelAirportContent = () => {
           imageRendering: "pixelated",
         }}
       />
-    </>
+    </AbsoluteFill>
   );
 };
 
@@ -745,5 +747,4 @@ export const PixelAirport = Interactive.withSchema({
   componentName: "PixelAirport",
   schema: {},
   wrapInSequence: true,
-  layout: "absolute-fill",
 });

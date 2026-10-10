@@ -1,4 +1,6 @@
 import {
+  AbsoluteFill,
+  type InteractiveTransformProps,
   CanvasImage,
   Interactive,
   interpolate,
@@ -7,12 +9,12 @@ import {
   useVideoConfig,
 } from "remotion";
 
-const AirportLayoutContent = () => {
+const AirportLayoutContent = ({ style }: InteractiveTransformProps) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   return (
-    <>
+    <AbsoluteFill style={style}>
       <CanvasImage
         name="Grass, terminal and control tower"
         src={staticFile("airport/airport-terrain-v2.png")}
@@ -161,7 +163,7 @@ const AirportLayoutContent = () => {
           }}
         />
       </Interactive.Svg>
-    </>
+    </AbsoluteFill>
   );
 };
 
@@ -170,5 +172,4 @@ export const AirportLayout = Interactive.withSchema({
   componentName: "AirportLayout",
   schema: {},
   wrapInSequence: true,
-  layout: "absolute-fill",
 });
