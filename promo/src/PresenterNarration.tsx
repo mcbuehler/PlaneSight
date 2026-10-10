@@ -1,17 +1,33 @@
 import { Audio, Video } from "@remotion/media";
 import {
   AbsoluteFill,
+  CanvasImage,
   type InteractiveTransformProps,
   Interactive,
   staticFile,
+  useCurrentFrame,
   useVideoConfig,
 } from "remotion";
 import { BasicCaptions } from "./basic-captions";
 import { PlaneSightLogo } from "./PlaneSightLogo";
-import { EightAgentsIntro } from "./EightAgentsIntro";
+import { AirportOverview, FiveAgentsIntro } from "./FiveAgentDemo";
+import { GeminiTowerScene } from "./GeminiTowerScene";
+import { TaxiwayDependencies } from "./TaxiwayDependencies";
+import { AirportSignZoom } from "./AirportSignZoom";
+import { HerdrGroundControl } from "./HerdrGroundControl";
+import { TowerZoom } from "./TowerZoom";
+import { EntireTrailsOverlay } from "./EntireTrailsOverlay";
+import { FrontOfLineZoom } from "./FrontOfLineZoom";
+import { EntireCommitsBroll } from "./EntireCommitsBroll";
 
 const PresenterNarrationContent = ({ style }: InteractiveTransformProps) => {
   const { fps } = useVideoConfig();
+  const frame = useCurrentFrame();
+  const showingTower =
+    (frame >= (994 / 30) * fps && frame < (1056 / 30) * fps) ||
+    (frame >= (1588 / 30) * fps && frame < (1745 / 30) * fps) ||
+    (frame >= (2529 / 30) * fps && frame < (2591 / 30) * fps);
+  const showingHerdr = frame >= (1745 / 30) * fps && frame < (1997 / 30) * fps;
 
   return (
     <AbsoluteFill style={style}>
@@ -20,8 +36,78 @@ const PresenterNarrationContent = ({ style }: InteractiveTransformProps) => {
         src={staticFile("audio/presenter-normalized.wav")}
         premountFor={fps}
       />
-      <EightAgentsIntro
-        name="Closing — eight agents waiting"
+      <AirportOverview
+        name="Airport — control tower and priority queue"
+        from={35.2 * fps}
+        durationInFrames={40 * fps}
+        premountFor={fps}
+      />
+      <CanvasImage
+        name="Airport after the Herdr handoff"
+        src={staticFile("screenshots/herdr-terminal-airport.png")}
+        from={Math.round((1997 / 30) * fps)}
+        durationInFrames={(758 / 30) * fps}
+        premountFor={fps}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+      <GeminiTowerScene
+        name="Gemini — control tower hover"
+        from={(1588 / 30) * fps}
+        durationInFrames={(157 / 30) * fps}
+        premountFor={fps}
+      />
+      <HerdrGroundControl
+        name="Herdr — send and return to the airport automatically"
+        from={(1745 / 30) * fps}
+        durationInFrames={(252 / 30) * fps}
+        premountFor={fps}
+      />
+      <TaxiwayDependencies
+        name="Identifies dependencies — zoom into taxiway"
+        from={(1412 / 30) * fps}
+        durationInFrames={(176 / 30) * fps}
+        premountFor={fps}
+      />
+      <FrontOfLineZoom
+        name="In front of the line — priority-one plane"
+        from={Math.round((1321 / 30) * fps)}
+        durationInFrames={Math.round((91 / 30) * fps)}
+        premountFor={fps}
+      />
+      <AirportSignZoom
+        name="Agent Airport International — zoom into sign"
+        from={(2018 / 30) * fps}
+        durationInFrames={Math.round((69 / 30) * fps)}
+        premountFor={fps}
+      />
+      <EntireCommitsBroll
+        name="Operated by Entire — PlaneSight commit history"
+        from={Math.round((2087 / 30) * fps)}
+        durationInFrames={Math.round((169 / 30) * fps)}
+        premountFor={fps}
+      />
+      <TowerZoom
+        name="Air traffic controller — tower introduction"
+        from={Math.round((994 / 30) * fps)}
+        durationInFrames={Math.round((62 / 30) * fps)}
+        afterHerdr={false}
+        premountFor={fps}
+      />
+      <TowerZoom
+        name="Air traffic controller — tower callback"
+        from={Math.round((2529 / 30) * fps)}
+        durationInFrames={Math.round((62 / 30) * fps)}
+        afterHerdr
+        premountFor={fps}
+      />
+      <FiveAgentsIntro
+        name="Closing — five agents in Herdr"
         from={75.2 * fps}
         durationInFrames={8.1 * fps}
         premountFor={fps}
@@ -32,7 +118,8 @@ const PresenterNarrationContent = ({ style }: InteractiveTransformProps) => {
         style={{
           position: "absolute",
           top: 32,
-          right: 32,
+          right: showingTower ? undefined : 32,
+          left: showingTower ? 32 : undefined,
           width: 240,
           height: 240,
           borderRadius: "50%",
@@ -62,25 +149,33 @@ const PresenterNarrationContent = ({ style }: InteractiveTransformProps) => {
       <PlaneSightLogo
         name="Plane Sight air traffic controller"
         from={(946 / 30) * fps}
-        durationInFrames={(110 / 30) * fps}
+        durationInFrames={(48 / 30) * fps}
         premountFor={fps}
       />
       <PlaneSightLogo
-        name="Plane Sight closing line"
+        name="Plane Sight closing — logo only"
         from={(2728 / 30) * fps}
         durationInFrames={(27 / 30) * fps}
+        premountFor={fps}
+        style={{ backgroundColor: "#ffffff", zIndex: 10 }}
+      />
+      <EntireTrailsOverlay
+        name="Entire Trails wink — 1.5 seconds on trails"
+        from={Math.round((679 / 30) * fps)}
+        durationInFrames={1.5 * fps}
         premountFor={fps}
       />
       <BasicCaptions
         name="Speech captions"
         premountFor={fps}
-        width={1280}
-        combineTokensWithinMilliseconds={4000}
+        width={showingHerdr ? 1120 : 1280}
+        combineTokensWithinMilliseconds={5000}
         style={{
           position: "absolute",
-          bottom: 48,
+          top: showingHerdr ? 72 : undefined,
+          bottom: showingHerdr ? undefined : 48,
           scale: "0.6666667",
-          transformOrigin: "50% 100%",
+          transformOrigin: showingHerdr ? "50% 0%" : "50% 100%",
         }}
         captions={[
           {
@@ -152,6 +247,7 @@ const PresenterNarrationContent = ({ style }: InteractiveTransformProps) => {
             endMs: 5880,
             timestampMs: 5740,
             confidence: null,
+            pageBreakAfter: true,
           },
           {
             text: " 8",
@@ -1526,42 +1622,42 @@ const PresenterNarrationContent = ({ style }: InteractiveTransformProps) => {
             pageBreakAfter: true,
           },
           {
-            text: " the",
+            text: "",
             startMs: 90020,
             endMs: 90300,
             timestampMs: 90160,
             confidence: null,
           },
           {
-            text: " answer",
+            text: "",
             startMs: 90300,
             endMs: 90600,
             timestampMs: 90450,
             confidence: null,
           },
           {
-            text: " is",
+            text: "",
             startMs: 90600,
             endMs: 90760,
             timestampMs: 90680,
             confidence: null,
           },
           {
-            text: " in",
+            text: "",
             startMs: 90760,
             endMs: 90920,
             timestampMs: 90840,
             confidence: null,
           },
           {
-            text: " plane",
+            text: "",
             startMs: 90920,
             endMs: 91220,
             timestampMs: 91070,
             confidence: null,
           },
           {
-            text: " sight.",
+            text: "",
             startMs: 91220,
             endMs: 91400,
             timestampMs: 91310,

@@ -52,7 +52,6 @@ if (process.argv.includes("--prepare")) {
       }
       control("agent", "start", task.id, "--kind", "claude", "--pane", agent.pane, "--timeout", "30000", "--",
         "--settings", path.join(project, "app/hooks/claude-settings.json"),
-        "--prompt-suggestions", "false",
         "--permission-mode", "default", "--tools", "Read,Edit,Write,Glob,Grep,Bash,AskUserQuestion",
         "--allowedTools", "Read,Edit,Write,Glob,Grep,Bash(node --test *),Bash(git diff *),Bash(git status *)");
       agent.started = true; save(manifest);

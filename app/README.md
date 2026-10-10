@@ -26,7 +26,9 @@ For development, run `npm run server` and `npm run dev` instead, and open http:/
 
 The top bar stays visible in both views. Its top-left **Herdr →** button opens the selected agent’s session (or the Herdr overview when no agents are available), then becomes **← Back to airport** in exactly the same place.
 
-Click a plane or its name label to open that agent's chat directly in an embedded [herdr-web-ui](https://github.com/devswha/herdr-web-ui) view, in the same tab. There is no intervening popup. Sending a message returns to the airport after Herdr confirms delivery. Failed sends stay open; queued messages return after delivery, preserving their live connection while waiting. **Back to airport** (or browser Back) also returns to the airport with the same plane selected. The web client also offers the live terminal.
+Click a plane or its name label to open that agent's chat directly in an embedded [herdr-web-ui](https://github.com/devswha/herdr-web-ui) view, in the same tab. There is no intervening popup. Sending a message returns to the airport after Herdr confirms delivery. Native terminal submissions also return when that session starts working. Failed sends stay open; queued messages return after delivery, preserving their live connection while waiting. **Back to airport** (or browser Back) also returns to the airport with the same plane selected. The web client also offers the live terminal.
+
+The demo disables Claude's prompt suggestions with `promptSuggestionEnabled: false` in its settings file. This keeps uncolored suggestions from being mistaken for unsent terminal input; real typed drafts remain protected.
 
 `npm run setup` and `npm run up` take care of herdr-web-ui. Both servers must use the same Herdr socket: for a named Herdr session, set `HERDR_SOCKET_PATH` in `.env` before `npm run setup`. If the web client runs at another address, set `HERDR_WEB_URL`. Links use Herdr's pane ID to select the matching session.
 

@@ -11,6 +11,15 @@ import { EightAgentsIntro } from "./EightAgentsIntro";
 import { PresenterNarration } from "./PresenterNarration";
 import { FlightCrewScene } from "./FlightCrewScene";
 import { AgentAirportSign } from "./AgentAirportSign";
+import { AirportDemo, AirportOverview, FiveAgentsIntro } from "./FiveAgentDemo";
+import { GeminiTowerScene } from "./GeminiTowerScene";
+import { TaxiwayDependencies } from "./TaxiwayDependencies";
+import { AirportSignZoom } from "./AirportSignZoom";
+import { HerdrGroundControl } from "./HerdrGroundControl";
+import { TowerZoom } from "./TowerZoom";
+import { EntireTrailsOverlay } from "./EntireTrailsOverlay";
+import { FrontOfLineZoom } from "./FrontOfLineZoom";
+import { EntireCommitsBroll } from "./EntireCommitsBroll";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -27,6 +36,95 @@ export const RemotionRoot: React.FC = () => {
         id="PlaneSightLogo"
         component={PlaneSightLogo}
         durationInFrames={120}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="FiveAgentsIntro"
+        component={FiveAgentsIntro}
+        durationInFrames={243}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="AirportDemo"
+        component={AirportDemo}
+        durationInFrames={496}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="AirportOverview"
+        component={AirportOverview}
+        durationInFrames={1200}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="TaxiwayDependencies"
+        component={TaxiwayDependencies}
+        durationInFrames={176}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="AirportSignZoom"
+        component={AirportSignZoom}
+        durationInFrames={220}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="GeminiTowerScene"
+        component={GeminiTowerScene}
+        durationInFrames={374}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="HerdrGroundControl"
+        component={HerdrGroundControl}
+        durationInFrames={252}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="TowerZoom"
+        component={TowerZoom}
+        durationInFrames={62}
+        fps={30}
+        width={1280}
+        height={720}
+        defaultProps={{ afterHerdr: false }}
+      />
+      <Composition
+        id="EntireTrailsOverlay"
+        component={EntireTrailsOverlay}
+        durationInFrames={45}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="FrontOfLineZoom"
+        component={FrontOfLineZoom}
+        durationInFrames={91}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="EntireCommitsBroll"
+        component={EntireCommitsBroll}
+        durationInFrames={169}
         fps={30}
         width={1280}
         height={720}

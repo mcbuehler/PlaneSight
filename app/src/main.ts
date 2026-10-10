@@ -9,7 +9,7 @@ import { drawRoads } from "./airfield";
 import { H, STATUS_WORD, W, airframe, airline, groups, layout, name, tone } from "./model";
 import { h, newFlightForm } from "./ui";
 import type { Plane, Spot, TowerState } from "./types";
-import { sentPane } from "./herdrEmbed";
+import { resumedPane, sentPane } from "./herdrEmbed";
 import { Departures } from "./departures";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -327,6 +327,7 @@ fit();
 const events = new EventSource("/events");
 events.onmessage = (e) => {
   const next = JSON.parse(e.data) as TowerState;
+  const resumed = !herdrView.hidden ? resumedPane(framedPane, state.planes, next.planes) : null;
   // Also animate submissions made directly in Herdr before its send event arrives.
   // Otherwise the transient need=null/status=done snapshot routes a queued plane to a stand.
   for (const plane of state.planes) {
@@ -336,7 +337,12 @@ events.onmessage = (e) => {
   state = next;
   departures.reconcile(state.planes);
   render();
-  syncHerdrRoute();
+  if (resumed) {
+    selected = resumed.session;
+    pinned = true;
+    sendOff(resumed);
+    returnToAirport();
+  } else syncHerdrRoute();
 };
 
 // Development only: lets browser scripts select planes that are hard to hit while they move.

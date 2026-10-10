@@ -1,5 +1,5 @@
 import { AbsoluteFill, Series, useVideoConfig } from "remotion";
-import { EightAgentsIntro } from "./EightAgentsIntro";
+import { AirportDemo, FiveAgentsIntro } from "./FiveAgentDemo";
 import { PresenterNarration } from "./PresenterNarration";
 import { FlightCrewScene } from "./FlightCrewScene";
 
@@ -8,9 +8,15 @@ export const PlaneSightPromo = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#ffffff" }}>
-      <EightAgentsIntro
-        name="Opening — eight agents waiting"
+      <FiveAgentsIntro
+        name="Opening — five agents in Herdr"
         durationInFrames={8.1 * fps}
+        premountFor={fps}
+      />
+      <AirportDemo
+        name="Airport — depart, work, return"
+        from={(344 / 30) * fps}
+        durationInFrames={(496 / 30) * fps}
         premountFor={fps}
       />
       <Series name="Promo scenes" layout="absolute-fill" premountFor={fps}>
