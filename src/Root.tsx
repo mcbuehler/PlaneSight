@@ -4,6 +4,8 @@ import { PlaneSightPromo } from "./Composition";
 import { PlaneSightLogo } from "./PlaneSightLogo";
 import { CloudCodePlane, OpenAirPlane, PixelAirlines } from "./PixelAirlines";
 import { PixelAirport } from "./PixelAirport";
+import { AirportAircraft } from "./AirportAircraft";
+import { AirportControlPanel } from "./AirportControlPanel";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -26,9 +28,33 @@ export const RemotionRoot: React.FC = () => {
       />
       <Folder name="Pixel-Airlines">
         <Composition
+          id="AirportControlPanel"
+          component={AirportControlPanel}
+          durationInFrames={420}
+          fps={30}
+          width={1280}
+          height={720}
+        />
+        <Composition
+          id="AirportAircraft"
+          component={AirportAircraft}
+          durationInFrames={120}
+          fps={30}
+          width={192}
+          height={286}
+          defaultProps={{
+            airline: "Cloud Code",
+            heading: 90,
+            labelPosition: "above",
+            flightId: "CC-104",
+            status: "Build failed · urgent",
+            priority: true,
+          }}
+        />
+        <Composition
           id="PixelAirport"
           component={PixelAirport}
-          durationInFrames={180}
+          durationInFrames={420}
           fps={30}
           width={1280}
           height={720}
