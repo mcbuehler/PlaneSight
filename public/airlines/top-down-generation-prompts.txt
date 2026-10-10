@@ -1,0 +1,13 @@
+Created using the built-in image_gen tool. Both PNG files have transparent backgrounds.
+
+CLOUD CODE
+Output: cloud-code-plane-top-down.png
+Reference: cloud-code-plane.png
+Prompt:
+Create a new game-ready pixel-art airplane sprite using the reference ONLY for airline identity and palette. This must be a STRICT TOP-DOWN ORTHOGRAPHIC plan view: camera directly overhead, looking straight down at the aircraft roof; NOT side view, NOT 3/4, NOT isometric, no perspective. Nose points toward the TOP of the image, tail toward the BOTTOM. Centered bilateral symmetric passenger jet, both full wings equally visible, two engines beside fuselage, clear swept tailplane, entire aircraft and every wingtip uncropped with transparent padding. White aircraft, cobalt and navy blue livery, blue tail accent with white pixel cloud emblem. Put the exact readable airline name 'Cloud Code' in dark cobalt across the upper surface of the broad wings, arranged as Cloud on the left wing and Code on the right wing, horizontal left-to-right text readable to the viewer. The geometry and pixel grid should resemble a polished 16-bit airport management game: bold stepped edges, crisp square pixels, restrained 5-tone shading from directly above, no soft edges or gradients, no external cast shadow, no ground, no scenery. Single aircraft, square canvas, transparent background.
+
+OPENAIR
+Output: openair-plane-top-down.png
+References: cloud-code-plane-top-down.png (geometry), openair-plane.png (livery)
+Prompt:
+Create an OpenAir edition of the FIRST reference image, preserving its exact overhead airplane geometry, proportions, orientation and crisp pixel-art rendering. FIRST reference defines the aircraft: STRICT TOP-DOWN ORTHOGRAPHIC plan view, nose pointing up, tail down, full symmetric swept wings and both engines equally visible. SECOND reference defines only OpenAir airline palette and identity; do NOT use its side-view camera. Replace ALL blue livery on the overhead aircraft with saturated emerald-green and deep charcoal-green. White body and wings. Replace the wing lettering: exact text 'OpenAir', with 'Open' on the LEFT wing and 'Air' on the RIGHT wing, clear dark-green pixel lettering readable horizontally to the viewer. On the tail replace the cloud with a small white geometric chevron/diamond airline emblem. Keep the same full-aircraft framing, pixel grid, stepped silhouette and restrained shading. No added objects, no ground or external shadow. Square canvas and genuine transparent background, all wing tips and tail visible with padding. Top-down game sprite, never isometric or side view.

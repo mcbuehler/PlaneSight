@@ -1,0 +1,21 @@
+Created using the built-in image_gen tool. Both PNG files have transparent backgrounds.
+
+CLOUD CODE
+Use case: stylized-concept.
+Asset type: reusable transparent pixel-art airplane sprite for a software promo.
+Primary request: Create one excellent pixel-art passenger jet for the fictional airline "Cloud Code".
+Composition: Entire airplane visible, exact broadside profile, tail on the left and nose pointing to the right, wings and engines visible, landing gear retracted. A wide horizontal silhouette with modest transparent padding on every side. Isolated airplane, no scene.
+Style: Deliberately hand-pixeled 16-bit game sprite with a visibly consistent square pixel grid, stepped silhouette, crisp pixel clusters, restrained block shading and a dark pixel outline. The visual language should sit naturally beside chunky Minecraft-inspired pixel lettering. Playful but carefully designed, recognizable as a commercial airliner, not a toy and not a photorealistic aircraft.
+Livery: Clean readable body with a distinctive restrained airline color accent and a matching tail treatment. Make the words "Cloud Code" prominent on the fuselage in a bold, legible pixel font, beneath the cabin windows. Spell exactly "Cloud Code" with capital C in both words. This is painted airline branding physically on the airplane, not a caption below it.
+Constraints: One airplane only. The fuselage text must read exactly "Cloud Code". No other text, no watermark, no labels outside the plane, no flight trails, no clouds, no background, no shadow on a surface. Genuine transparent alpha background. No smooth vector curves, no soft gradients, no 3D rendering.
+
+OPENAIR
+Reference: cloud-code-plane.png
+Use case: precise-object-edit.
+Asset type: second reusable transparent pixel-art airline sprite for the same software promo.
+Use the provided Cloud Code airplane as the style and shape reference. Create the matching "OpenAir" airline version.
+Preserve the entire aircraft silhouette, broadside right-facing pose, relative wing and engine proportions, pixel-grid scale, crisp stepped outline, shading technique, canvas framing and transparent background.
+Change the airline livery so this is clearly a different carrier: an elegant white fuselage with dark charcoal and fresh green livery accents instead of blue, a matching green tail with a simple pixel geometric airline emblem, and coordinated engine markings.
+Replace all "Cloud Code" text on the fuselage with exactly "OpenAir" (capital O and A, no space), in equally prominent, clean, readable pixel lettering. No other words.
+Keep it as pure hand-pixeled 16-bit game art, not smooth vector art or a photorealistic rendering. Only one airplane. Do not add backgrounds, labels, ground shadows, clouds, flight trails or extra objects. Preserve genuine transparent alpha.
+
