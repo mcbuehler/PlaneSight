@@ -1,0 +1,8 @@
+T1 a
+T2 agreed
+T3 b) it shoule be way calmer. the airport was way too busy and didnt help with cognitive overload tbh. it should be a nice fancy browser interface on top of our herdr engine like https://github.com/devswha/herdr-web-ui
+T4 a
+T5 ok and then works for our PoC demo in "production"?
+T6 agreed
+T7 yes 
+T8 agreed
