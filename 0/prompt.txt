@@ -1,0 +1,1 @@
+ok this looks and feels kinda shit. can we just kind of clone https://github.com/devswha/herdr-web-ui and add a new view to it?
