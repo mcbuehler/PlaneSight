@@ -47,7 +47,7 @@ function log(...args) {
 }
 
 function repoOf(cwd) {
-  if (!cwd) return Promise.resolve("unknown");
+  if (!cwd) return Promise.resolve({ name: "unknown", root: null });
   if (repoCache.has(cwd)) return Promise.resolve(repoCache.get(cwd));
   return new Promise((resolve) => {
     execFile("git", ["-C", cwd, "rev-parse", "--path-format=absolute", "--git-common-dir"], (err, out) => {
