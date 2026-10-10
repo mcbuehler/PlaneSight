@@ -1,14 +1,16 @@
 import {
+  CanvasImage,
   Easing,
   Interactive,
   interpolate,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
 import { AirportAircraft } from "./AirportAircraft";
 import { AirportLayout } from "./AirportLayout";
 
-const PixelAirportContent = () => {
+const AirportTraffic = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   return (
@@ -690,6 +692,48 @@ const PixelAirportContent = () => {
               extrapolateRight: "clamp",
             },
           ),
+        }}
+      />
+    </>
+  );
+};
+
+const PixelAirportContent = () => {
+  const { fps } = useVideoConfig();
+
+  return (
+    <>
+      <Interactive.Div
+        name="Airport backdrop"
+        style={{ position: "absolute", inset: 0, backgroundColor: "#527347" }}
+      />
+      <Interactive.Div
+        name="Airfield below entrance sign"
+        premountFor={fps}
+        style={{
+          position: "absolute",
+          left: 128,
+          top: 144,
+          width: 1280,
+          height: 720,
+          scale: 0.8,
+          transformOrigin: "0 0",
+        }}
+      >
+        <AirportTraffic />
+      </Interactive.Div>
+      <CanvasImage
+        name="Agent Airport International — entrance sign"
+        src={staticFile("branding/agent-airport-international.png")}
+        premountFor={fps}
+        style={{
+          position: "absolute",
+          left: 360,
+          top: -19,
+          width: 560,
+          height: 227,
+          objectFit: "contain",
+          imageRendering: "pixelated",
         }}
       />
     </>

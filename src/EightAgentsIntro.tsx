@@ -19,20 +19,24 @@ const EightAgentsIntroContent = () => {
       style={{
         position: "absolute",
         top: 32,
-        left: interpolate(frame, [1.3 * fps, 3.5 * fps], [384.0625, 480], {
+        left: interpolate(frame, [1.3 * fps, 3.5 * fps], [280, 440], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: Easing.bezier(0.42, 0, 0.3, 1),
         }),
-        width: interpolate(frame, [1.3 * fps, 3.5 * fps], [511.875, 320], {
+        width: interpolate(frame, [1.3 * fps, 3.5 * fps], [720, 400], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: Easing.bezier(0.42, 0, 0.3, 1),
         }),
-        height: 500,
+        height: interpolate(frame, [1.3 * fps, 3.5 * fps], [405, 520], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: Easing.bezier(0.42, 0, 0.3, 1),
+        }),
         borderRadius: 10,
         overflow: "hidden",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#11100e",
         boxShadow: "0 12px 36px rgba(21, 31, 44, 0.12)",
         opacity: interpolate(
           frame,
@@ -43,17 +47,17 @@ const EightAgentsIntroContent = () => {
       }}
     >
       <CanvasImage
-        name="Eight waiting agents — screenshot zoom"
-        src={staticFile("screenshots/eight-agents-waiting.png")}
+        name="Eight agents — Herdr web UI zoom"
+        src={staticFile("screenshots/eight-agents-herdr-web.jpg")}
         premountFor={fps}
         style={{
           position: "absolute",
           left: 0,
           top: 0,
-          width: 511.875,
-          height: 500,
+          width: 720,
+          height: 405,
           transformOrigin: "0 0",
-          scale: interpolate(frame, [1.3 * fps, 3.5 * fps], [1, 2.816], {
+          scale: interpolate(frame, [1.3 * fps, 3.5 * fps], [1, 20 / 9], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: Easing.bezier(0.42, 0, 0.3, 1),
@@ -62,7 +66,7 @@ const EightAgentsIntroContent = () => {
           translate: interpolate(
             frame,
             [1.3 * fps, 3.5 * fps],
-            ["0px 0px", "-12px -708px"],
+            ["0px 0px", "0px -62.5px"],
             {
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
