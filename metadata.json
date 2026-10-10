@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4K509AWBKNHBVEKTG9KHT96",
+  "strategy": "manual-commit",
+  "branch": "feat/session-urgency-ranker",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "mocks/demo.js",
+    "mocks/index.js",
+    "mocks/mockSession.js",
+    "mocks/scenarios.js",
+    "package.json",
+    "src/digest.js",
+    "src/features.js",
+    "src/gemini.js",
+    "src/index.js",
+    "src/learn.js",
+    "src/prescore.js",
+    "src/rank.js",
+    "src/redact.js",
+    "test/digest.test.js",
+    "test/learning.test.js",
+    "test/rank.test.js",
+    "test/redact.test.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 68,
+    "cache_creation_tokens": 78601,
+    "cache_read_tokens": 2658193,
+    "output_tokens": 55426,
+    "api_call_count": 34
+  }
+}
