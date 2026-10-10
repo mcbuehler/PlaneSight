@@ -1,0 +1,2 @@
+U3 we dont need to embed interactive terminals
+U4 choose the recommended stack to build an interactive beautiful pixel art game interface can be react, can be pure canvas, you can also use phaser if it helps. i have no hard opinions here
