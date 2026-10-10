@@ -23,7 +23,7 @@ async function json(model, system, input, schema) {
 const CARD_SCHEMA = {
   type: "object",
   properties: {
-    title: { type: "string", description: "3 to 6 words naming what the agent works on" },
+    title: { type: "string", description: "A short, sentence-case conversation title: 3 to 6 words, starting with a concrete action verb, naming the task rather than its status. For example: Fix workspace isolation, Add API pagination, Polish landing page copy." },
     summary: { type: "string", description: "At most 2 short sentences: what the agent did and what it needs now" },
     category: { type: "string", enum: ["tool_approval", "design_decision", "clarification", "review", "error", "collision"] },
     proposal: {
