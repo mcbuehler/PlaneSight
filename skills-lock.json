@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "skills": {
+    "remotion-best-practices": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "fd3b15d898b087d0092c123cabafcc67da58913a2416e4113aa7d29f44a2c4c7"
+    },
+    "remotion-captions": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "8617a557e339a8973c32f4a23d74e3926f3a525fdb81cc8b45994b1d1b72298e"
+    },
+    "remotion-create": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "20eb707888ae89bf8563a9b88d23fa79ff0fad35dbf690b200e23d6362b924ef"
+    },
+    "remotion-docs": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "91c2d85c33e2a4c053f80fc132c0ac037be70a69eef543f9de4971ee25f3fd31"
+    },
+    "remotion-interactivity": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "3738f11c4968db040f0e6b6393b61f880f8074774b9d09d76ac8c594c207bdd0"
+    },
+    "remotion-maps": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "7826b699f7be82f659cab59055b21ba13a281983c18e22f6e129b831fd78101f"
+    },
+    "remotion-markup": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "c960409b1f9ce84700e9d69f818d427d14856b8576ef4a249e6b4bb128097d47"
+    },
+    "remotion-multimedia": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "9f07d63522ca781b42396607d16fbb7873eacef3a06f07b9f64ad3c7643ce1ba"
+    },
+    "remotion-render": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "31a2873ad414ddff5a7d4b861886632c26eff56f53faa7a24fd6c16c6d5aee1e"
+    },
+    "remotion-saas": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "e4d1f0ebccbd279cd9fcf5d39f0d4ab075519a02f002c20effe8097f6ffe37c9"
+    },
+    "remotion-studio": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "9abee4601075af47b4dd173ab731a60e7dea47479ccbc6cd68db1253ffcd1dea"
+    },
+    "remotion-upgrade": {
+      "source": "../../../Users/jonathanburger/remotion/packages/agent-plugin",
+      "sourceType": "local",
+      "computedHash": "59d789462c7842d2fc0bc54d4aa9f6e8f1f355f204e6451de3af3c0a7e05ca41"
+    }
+  }
+}

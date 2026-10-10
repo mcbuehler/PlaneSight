@@ -1,19 +1,47 @@
 {
-  "name": "planesight",
-  "version": "0.1.0",
+  "name": "plane-sight",
+  "version": "1.0.0",
+  "description": "Plane Sight hackathon promo and pixel-art control-tower prototype",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mcbuehler/PlaneSight.git"
+  },
+  "license": "UNLICENSED",
   "private": true,
-  "type": "module",
-  "description": "Ranks parallel Claude Code sessions by how urgently they need the developer's attention.",
-  "main": "src/index.js",
-  "exports": {
-    ".": "./src/index.js",
-    "./mocks": "./mocks/index.js"
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "@mediabunny/server": "1.61.3",
+    "@remotion/captions": "file:../remotion/packages/captions",
+    "@remotion/cli": "file:../remotion/packages/cli",
+    "@remotion/media": "file:../remotion/packages/media",
+    "@remotion/tailwind-v4": "file:../remotion/packages/tailwind-v4",
+    "@remotion/whisper-webgpu": "file:../remotion/packages/whisper-webgpu",
+    "mediabunny": "1.61.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "file:../remotion/packages/core",
+    "tailwindcss": "4.0.0"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "file:../remotion/packages/eslint-config-flat",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "9.39.5",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
   },
   "scripts": {
-    "test": "node --test \"test/*.test.js\"",
-    "demo": "node mocks/demo.js"
+    "restore-media": "node scripts/restore-media.mjs",
+    "predev": "npm run restore-media",
+    "dev": "remotion studio",
+    "prebuild": "npm run restore-media",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc",
+    "test:agent": "npm --prefix agent test"
   },
-  "engines": {
-    "node": ">=20"
-  }
+  "sideEffects": [
+    "*.css"
+  ],
+  "_remotionInternalPackageRoot": "../remotion"
 }
