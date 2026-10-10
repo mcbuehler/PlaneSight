@@ -11,8 +11,8 @@ uses illustrative task data; it is not connected to live agent sessions.
 ## Included compositions
 
 - **PlaneSightPromo** — trimmed presenter footage, captions, and animated logo.
-- **PixelAirport** — six animated aircraft, readable flight tooltips, a priority
-  clearance panel, and the terminal/control-tower UI concept.
+- **PixelAirport** — six animated aircraft, readable flight tooltips with task
+  and dependency status, and the terminal check-in sign.
 - **PixelAirlines** — top-down Cloud Code and OpenAir artwork.
 - **PlaneSightLogo**, **AirportAircraft**, and **AirportControlPanel** — reusable
   components that can also be edited in their own Studio timelines.
