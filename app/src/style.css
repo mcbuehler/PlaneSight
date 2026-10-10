@@ -1,0 +1,166 @@
+/* Plane Sight. The bubble shares the flight strips' style (drawn in AirportScene.ts):
+   cream paper, a thick left edge, Courier type, the airline's colour, amber for the next plane. */
+:root {
+  --grass: #6c9c57;
+  --ink: #23272d;
+  --ink-soft: #526557;
+  --paper: #f7f5e9;
+  --paper-next: #fff0c9;
+  --edge: #324e41;
+  --edge-next: #9a692c;
+  --cloud-code: #a3410e;
+  --openair: #105734;
+  --approve: #d9534a;
+  --decide: #3f7fd0;
+  --review: #3f9a4f;
+  --alert: #e0a020;
+  --mono: "Courier New", ui-monospace, monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; }
+body { background: var(--grass); color: var(--ink); font: 18px/1.45 var(--sans); }
+
+.viewport { position: fixed; inset: 0; overflow: hidden; }
+
+/* the stage is the picture's own pixel grid; main.ts scales it to the window */
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1280px;
+  height: 720px;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+}
+#game { position: absolute; inset: 0; z-index: 0; }
+#game canvas { display: block; image-rendering: pixelated; }
+
+.tower-label, .flight-label, .overflow-label, .logo { position: absolute; margin: 0; z-index: 1; pointer-events: none; }
+.tower-label, .flight-label, .overflow-label {
+  font: 700 15px/1 var(--mono);
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--ink);
+}
+/* under the control tower in the top-right corner */
+.tower-label { left: 1092px; top: 128px; width: 180px; text-align: center; }
+.flight-label { right: 22px; bottom: 18px; font-size: 17px; }
+.overflow-label { left: 16px; top: 586px; }
+.logo { left: 14px; bottom: 10px; width: 170px; }
+
+/* ---------------------------------------------------------------- bubble */
+
+#bubble { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.bubble {
+  --tone: var(--edge);
+  position: absolute;
+  width: 380px;
+  padding: 11px 13px 10px;
+  background: var(--paper);
+  border: 2px solid var(--edge);
+  border-left: 6px solid var(--tone);
+  box-shadow: 5px 5px 0 #334d4155;
+  pointer-events: auto;
+}
+.bubble.tone-approve { --tone: var(--approve); }
+.bubble.tone-decide { --tone: var(--decide); }
+.bubble.tone-review { --tone: var(--review); }
+.bubble.tone-alert { --tone: var(--alert); }
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: var(--tail-x, 50%);
+  bottom: -9px;
+  width: 14px;
+  height: 14px;
+  background: var(--paper);
+  border-right: 2px solid var(--edge);
+  border-bottom: 2px solid var(--edge);
+  transform: translateX(-50%) rotate(45deg);
+}
+.bubble.is-below::after { top: -9px; bottom: auto; transform: translateX(-50%) rotate(225deg); }
+
+.bubble-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.bubble-head strong { font: 700 17px/1 var(--mono); flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bubble-head small { font: 400 10px/1 var(--mono); color: #66736b; white-space: nowrap; }
+.bubble-head .kind { font: 700 11px/1 var(--mono); color: var(--tone); white-space: nowrap; }
+.bubble-head .wait { margin-left: auto; color: var(--ink-soft); font-size: 11px; white-space: nowrap; }
+.bubble p { margin: 0 0 8px; }
+.bubble .summary { font-size: 13.5px; line-height: 1.4; }
+/* why the tower put this plane here, from the ranking */
+.bubble .why { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: var(--ink-soft); }
+.bubble .why b { flex: none; padding: 2px 6px; background: var(--tone); color: #fff; font: 700 10.5px/1.2 var(--mono); }
+.bubble .collision { padding: 6px 10px; background: #fbe6b8; border-left: 4px solid var(--alert); font-size: 12.5px; }
+.bubble .proposal { padding: 7px 9px; background: #ecebdc; font-size: 12.5px; line-height: 1.4; }
+.bubble .proposal b { display: block; font: 700 10.5px/1.2 var(--mono); color: var(--ink-soft); margin-bottom: 3px; }
+.bubble textarea, .bubble .field {
+  display: block;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 13px;
+  border: 2px solid var(--edge);
+  background: #fff;
+  color: var(--ink);
+}
+.bubble textarea { min-height: 64px; resize: vertical; }
+.bubble .output {
+  margin: 10px 0 0;
+  padding: 10px;
+  max-height: 180px;
+  overflow: auto;
+  background: var(--ink);
+  color: #e6e3da;
+  font: 10px/1.35 ui-monospace, Menlo, monospace;
+  white-space: pre-wrap;
+}
+
+.actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.actions .secondary { margin-left: auto; display: flex; gap: 4px; }
+button {
+  font: 700 13px/1 var(--mono);
+  padding: 7px 9px 8px;
+  border: 2px solid var(--edge);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #334d4155;
+}
+button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #334d4155; }
+button:disabled { opacity: .5; cursor: default; }
+button.primary { background: var(--tone); border-color: var(--ink); color: #fff; }
+button.small { padding: 5px 6px 6px; font-size: 10.5px; box-shadow: 2px 2px 0 #334d4155; }
+button:focus-visible { outline: 3px solid var(--decide); outline-offset: 2px; }
+button kbd { font: inherit; opacity: .7; margin-left: 6px; }
+
+/* Herdr fills the same tab, above the still-mounted airport. */
+.herdr-view {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--ink);
+}
+.herdr-view[hidden] { display: none; }
+.herdr-bar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 18px;
+  background: var(--paper);
+  border-bottom: 3px solid var(--edge);
+}
+.herdr-bar button { flex-shrink: 0; background: var(--edge); color: #fff; }
+.herdr-heading { display: flex; gap: 12px; align-items: baseline; min-width: 0; font: 700 15px/1.3 var(--mono); }
+.herdr-heading span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-soft); font-weight: 400; }
+.herdr-frame-host { min-height: 0; }
+.herdr-frame-host iframe { display: block; width: 100%; height: 100%; border: 0; background: #141413; }
+
+@media (max-width: 540px) {
+  .herdr-bar { padding: 10px; gap: 14px; }
+  .herdr-heading { flex-direction: column; gap: 0; font-size: 12px; }
+  .herdr-heading span { max-width: 35vw; }
+}

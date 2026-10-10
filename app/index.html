@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plane Sight</title>
+<link rel="icon" href="data:,">
+</head>
+<body>
+<div class="viewport">
+  <main class="stage" id="stage" aria-label="Airport">
+    <div id="game"></div>
+    <p class="tower-label" id="tower" role="status"></p>
+    <p class="overflow-label" id="overflow"></p>
+    <p class="flight-label" id="flight"></p>
+    <img class="logo" id="logo" alt="Plane Sight">
+    <div id="bubble"></div>
+  </main>
+</div>
+<section id="herdr-view" class="herdr-view" aria-label="Herdr session" hidden>
+  <header class="herdr-bar">
+    <button id="back-to-airport" type="button">← Back to airport</button>
+    <div class="herdr-heading"><strong>Herdr</strong><span id="herdr-session"></span></div>
+  </header>
+  <div id="herdr-frame-host" class="herdr-frame-host"></div>
+</section>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
