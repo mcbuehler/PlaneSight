@@ -1,4 +1,4 @@
-// The airfield from the promo (src/AirportLayout.tsx): a central runway, a north and a south taxiway,
+// The airfield from the promo (promo/src/AirportLayout.tsx): a central runway, a north and a south taxiway,
 // and six angled entries. Same 1280 x 720 grid and the same path data, so the app and the video match.
 import Phaser from "phaser";
 

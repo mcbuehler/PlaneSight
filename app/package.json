@@ -5,11 +5,14 @@
   "type": "module",
   "description": "Plane Sight: a live pixel-art airport over the coding agents running in Herdr",
   "scripts": {
+    "setup": "sh scripts/setup.sh",
+    "up": "sh scripts/up.sh",
     "server": "node --env-file-if-exists=../.env --env-file-if-exists=.env server/server.mjs",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "start": "npm run build && npm run server",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test server/*.test.mjs && bun test tests"
   },
   "dependencies": {
     "@google/genai": "2.28.0",
