@@ -1,0 +1,19 @@
+{
+  "name": "plane-sight-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Ranks parallel Claude Code sessions by how urgently they need the developer's attention.",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./mocks": "./mocks/index.js"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "demo": "node mocks/demo.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

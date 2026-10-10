@@ -37,7 +37,8 @@
     "prebuild": "npm run restore-media",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "test:agent": "npm --prefix agent test"
   },
   "sideEffects": [
     "*.css"
