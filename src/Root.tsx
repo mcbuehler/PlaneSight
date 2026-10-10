@@ -6,6 +6,7 @@ import { CloudCodePlane, OpenAirPlane, PixelAirlines } from "./PixelAirlines";
 import { PixelAirport } from "./PixelAirport";
 import { AirportAircraft } from "./AirportAircraft";
 import { AirportControlPanel } from "./AirportControlPanel";
+import { AirportLayout } from "./AirportLayout";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -41,20 +42,29 @@ export const RemotionRoot: React.FC = () => {
           durationInFrames={120}
           fps={30}
           width={192}
-          height={286}
+          height={332}
           defaultProps={{
             airline: "Cloud Code",
+            airframe: "narrowbody",
             heading: 90,
             labelPosition: "above",
-            flightId: "CC-104",
             status: "Build failed · urgent",
             priority: true,
+            altitude: 0,
           }}
         />
         <Composition
           id="PixelAirport"
           component={PixelAirport}
-          durationInFrames={420}
+          durationInFrames={1980}
+          fps={30}
+          width={1280}
+          height={720}
+        />
+        <Composition
+          id="AirportLayout"
+          component={AirportLayout}
+          durationInFrames={1980}
           fps={30}
           width={1280}
           height={720}
@@ -74,6 +84,7 @@ export const RemotionRoot: React.FC = () => {
           fps={30}
           width={1280}
           height={720}
+          defaultProps={{ airframe: "narrowbody" }}
         />
         <Composition
           id="OpenAirPlane"
@@ -82,6 +93,25 @@ export const RemotionRoot: React.FC = () => {
           fps={30}
           width={1280}
           height={720}
+          defaultProps={{ airframe: "narrowbody" }}
+        />
+        <Composition
+          id="CloudCodeWidebody"
+          component={CloudCodePlane}
+          durationInFrames={180}
+          fps={30}
+          width={1280}
+          height={720}
+          defaultProps={{ airframe: "widebody" }}
+        />
+        <Composition
+          id="OpenAirWidebody"
+          component={OpenAirPlane}
+          durationInFrames={180}
+          fps={30}
+          width={1280}
+          height={720}
+          defaultProps={{ airframe: "widebody" }}
         />
       </Folder>
     </>

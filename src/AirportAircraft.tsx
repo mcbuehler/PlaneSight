@@ -1,57 +1,112 @@
 import { Interactive, useVideoConfig } from "remotion";
-import { CloudCodePlane, OpenAirPlane } from "./PixelAirlines";
+import {
+  CloudCodePlane,
+  OpenAirPlane,
+  type AircraftAirframe,
+} from "./PixelAirlines";
 
 type AirportAircraftProps = {
   airline: "Cloud Code" | "OpenAir";
+  airframe: AircraftAirframe;
   heading: number;
-  labelPosition: "above" | "below";
-  flightId: string;
+  labelPosition: "above" | "below" | "left";
   status: string;
   priority: boolean;
+  altitude: number;
 };
 
 const AirportAircraftContent = ({
   airline,
+  airframe,
   heading,
   labelPosition,
-  flightId,
   status,
   priority,
+  altitude,
 }: AirportAircraftProps) => {
   const { fps } = useVideoConfig();
+
+  if (status === "In flight") {
+    return null;
+  }
+
   return (
     <>
       <Interactive.Div
-        name="Aircraft heading"
+        name="Aircraft shadow"
         style={{
           position: "absolute",
-          left: 30,
-          top: 76,
-          width: 132,
-          height: 132,
+          left: airframe === "widebody" ? 17 : 30,
+          top: airframe === "widebody" ? 85 : 98,
+          width: airframe === "widebody" ? 158 : 132,
+          height: airframe === "widebody" ? 158 : 132,
           rotate: `${heading}deg`,
+          translate: `${altitude * 14}px ${altitude * 20}px`,
+          opacity: altitude * 0.22,
+          filter: "brightness(0)",
           transformOrigin: "50% 50%",
         }}
       >
         {airline === "Cloud Code" ? (
-          <CloudCodePlane name="Cloud Code aircraft" premountFor={fps} />
+          <CloudCodePlane
+            name="Cloud Code shadow"
+            airframe={airframe}
+            premountFor={fps}
+          />
         ) : (
-          <OpenAirPlane name="OpenAir aircraft" premountFor={fps} />
+          <OpenAirPlane
+            name="OpenAir shadow"
+            airframe={airframe}
+            premountFor={fps}
+          />
+        )}
+      </Interactive.Div>
+      <Interactive.Div
+        name="Aircraft heading"
+        style={{
+          position: "absolute",
+          left: airframe === "widebody" ? 17 : 30,
+          top: airframe === "widebody" ? 85 : 98,
+          width: airframe === "widebody" ? 158 : 132,
+          height: airframe === "widebody" ? 158 : 132,
+          rotate: `${heading}deg`,
+          scale: 1 + altitude * 0.12,
+          translate: `0px ${altitude * -12}px`,
+          transformOrigin: "50% 50%",
+        }}
+      >
+        {airline === "Cloud Code" ? (
+          <CloudCodePlane
+            name="Cloud Code aircraft"
+            airframe={airframe}
+            premountFor={fps}
+          />
+        ) : (
+          <OpenAirPlane
+            name="OpenAir aircraft"
+            airframe={airframe}
+            premountFor={fps}
+          />
         )}
       </Interactive.Div>
       <Interactive.Div
         name="Flight tooltip"
         style={{
           position: "absolute",
-          left: 0,
-          top: labelPosition === "above" ? 0 : 224,
+          left: labelPosition === "left" ? -180 : 0,
+          top:
+            labelPosition === "above"
+              ? 0
+              : labelPosition === "left"
+                ? 123
+                : 246,
           width: 192,
-          height: 58,
+          height: 82,
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-start",
-          justifyContent: "center",
-          padding: "7px 10px",
+          justifyContent: "flex-start",
+          padding: "8px 10px",
           gap: 5,
           textAlign: "left",
           boxSizing: "border-box",
@@ -59,7 +114,7 @@ const AirportAircraftContent = ({
           borderColor: priority ? "#9a692c" : "#324e41",
           borderLeftWidth: 5,
           backgroundColor: priority ? "#fff0c9" : "#f7f5e9",
-          color: airline === "Cloud Code" ? "#173e81" : "#105734",
+          color: airline === "Cloud Code" ? "#a3410e" : "#105734",
           fontFamily: "'Courier New', monospace",
           fontWeight: 700,
           fontSize: 18,
@@ -69,16 +124,13 @@ const AirportAircraftContent = ({
           boxShadow: "3px 3px 0 #334d4133",
         }}
       >
-        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-          <span>{airline}</span>
-          <span style={{ fontSize: 10, color: "#66736b", letterSpacing: 0 }}>
-            {flightId}
-          </span>
-        </div>
+        <div>{airline}</div>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 16,
             fontWeight: 400,
+            lineHeight: 1.15,
+            whiteSpace: "normal",
             color: priority ? "#86591c" : "#526557",
             letterSpacing: -0.2,
           }}
@@ -100,6 +152,12 @@ export const AirportAircraft = Interactive.withSchema({
       description: "Airline",
       variants: { "Cloud Code": {}, OpenAir: {} },
     },
+    airframe: {
+      type: "enum",
+      default: "narrowbody",
+      description: "Aircraft type",
+      variants: { narrowbody: {}, widebody: {} },
+    },
     heading: {
       type: "number",
       default: 90,
@@ -110,12 +168,7 @@ export const AirportAircraft = Interactive.withSchema({
       type: "enum",
       default: "above",
       description: "Name tag position",
-      variants: { above: {}, below: {} },
-    },
-    flightId: {
-      type: "string",
-      default: "CC-104",
-      description: "Flight ID",
+      variants: { above: {}, below: {}, left: {} },
     },
     status: {
       type: "string",
@@ -126,6 +179,14 @@ export const AirportAircraft = Interactive.withSchema({
       type: "boolean",
       default: false,
       description: "Highlight the next task",
+    },
+    altitude: {
+      type: "number",
+      default: 0,
+      min: 0,
+      max: 1,
+      description: "Flight height",
+      hiddenFromList: false,
     },
   },
   wrapInSequence: true,

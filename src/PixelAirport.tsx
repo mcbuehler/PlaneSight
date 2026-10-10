@@ -1,185 +1,137 @@
 import {
-  CanvasImage,
   Easing,
   Interactive,
   interpolate,
-  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
 import { AirportAircraft } from "./AirportAircraft";
-import { AirportControlPanel } from "./AirportControlPanel";
+import { AirportLayout } from "./AirportLayout";
 
 const PixelAirportContent = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   return (
     <>
-      <CanvasImage
-        name="Runway, taxiways, terminal and tower"
-        src={staticFile("airport/pixel-airport.png")}
+      <AirportLayout
+        name="Airport with north and south angled taxiways"
         premountFor={fps}
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          imageRendering: "pixelated",
-        }}
       />
       <AirportAircraft
-        name="Cloud Code 1 — first in line"
-        flightId="CC-104"
-        status="Build failed · urgent"
-        priority={true}
+        name="Cloud Code — urgent priority"
         airline="Cloud Code"
-        labelPosition="above"
+        airframe="narrowbody"
+        status={
+          frame < 5 * fps
+            ? "Needs your input"
+            : frame < 11.5 * fps
+              ? "Build failed · urgent"
+              : frame < 20 * fps
+                ? "Moved to front"
+                : frame < 21.8 * fps
+                  ? "Taking off"
+                  : frame < 40 * fps
+                    ? "In flight"
+                    : frame < 40.8 * fps
+                      ? "On approach"
+                      : frame < 43.4 * fps
+                        ? "Landed · slowing"
+                        : frame < 45.4 * fps
+                          ? "Taxiing in"
+                          : "Ready for review"
+        }
+        priority={frame >= 5 * fps && frame < 21.8 * fps}
+        labelPosition={
+          frame >= 8.7 * fps && frame < 11.5 * fps
+            ? "left"
+            : frame < 40 * fps
+              ? "below"
+              : "above"
+        }
+        altitude={interpolate(
+          frame,
+          [20.8 * fps, 21.8 * fps, 40 * fps, 40.8 * fps, 41.1 * fps],
+          [0, 1, 1, 0.2, 0],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
         premountFor={fps}
         width={192}
-        height={286}
-        heading={interpolate(frame, [2.2 * fps, 2.8 * fps], [0, 90], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })}
+        height={332}
+        heading={interpolate(
+          frame,
+          [
+            0 * fps,
+            5 * fps,
+            5.8 * fps,
+            8 * fps,
+            8.7 * fps,
+            21.8 * fps,
+            40 * fps,
+            43.4 * fps,
+            43.9 * fps,
+            45 * fps,
+            45.2 * fps,
+          ],
+          [90, 90, 45, 45, 90, 90, 270, 270, 315, 315, 270],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
         style={{
           position: "absolute",
+          overflow: "visible",
           left: -96,
-          top: -142,
+          top: -164,
           translate: interpolate(
             frame,
             [
-              0.8 * fps,
-              2.2 * fps,
-              2.35 * fps,
-              2.5 * fps,
-              2.65 * fps,
-              2.8 * fps,
-              4.1 * fps,
-            ],
-            [
-              "1058px 473px",
-              "1058px 362px",
-              "1059.3px 355.5px",
-              "1063px 350px",
-              "1068.5px 346.3px",
-              "1075px 345px",
-              "1130px 345px",
-            ],
-            {
-              easing: [
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.bezier(0, 0, 0.35, 1),
-              ],
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-            },
-          ),
-        }}
-      />
-      <AirportAircraft
-        name="OpenAir 1 — second in line"
-        flightId="OA-202"
-        status="Ready for review"
-        priority={false}
-        airline="OpenAir"
-        labelPosition="above"
-        premountFor={fps}
-        width={192}
-        height={286}
-        heading={interpolate(frame, [3.4 * fps, 4 * fps], [0, 90], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })}
-        style={{
-          position: "absolute",
-          left: -96,
-          top: -142,
-          translate: interpolate(
-            frame,
-            [
-              2 * fps,
-              3.4 * fps,
-              3.55 * fps,
-              3.7 * fps,
-              3.85 * fps,
-              4 * fps,
-              7.2 * fps,
-            ],
-            [
-              "626px 473px",
-              "626px 362px",
-              "627.3px 355.5px",
-              "631px 350px",
-              "636.5px 346.3px",
-              "643px 345px",
-              "920px 345px",
-            ],
-            {
-              easing: [
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.bezier(0, 0, 0.35, 1),
-              ],
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-            },
-          ),
-        }}
-      />
-      <AirportAircraft
-        name="Cloud Code 2 — third in line"
-        flightId="CC-108"
-        status="Tests passed · ready"
-        priority={false}
-        airline="Cloud Code"
-        labelPosition="above"
-        premountFor={fps}
-        width={192}
-        height={286}
-        heading={interpolate(frame, [5.4 * fps, 6 * fps], [0, 90], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })}
-        style={{
-          position: "absolute",
-          left: -96,
-          top: -142,
-          translate: interpolate(
-            frame,
-            [
-              4 * fps,
+              0 * fps,
+              5 * fps,
               5.4 * fps,
-              5.55 * fps,
-              5.7 * fps,
-              5.85 * fps,
-              6 * fps,
-              10.6 * fps,
+              5.8 * fps,
+              8 * fps,
+              8.3 * fps,
+              8.5 * fps,
+              8.7 * fps,
+              11.5 * fps,
+              20 * fps,
+              20.8 * fps,
+              21.3 * fps,
+              21.8 * fps,
+              40 * fps,
+              40.8 * fps,
+              43.4 * fps,
+              43.5 * fps,
+              43.7 * fps,
+              43.9 * fps,
+              45 * fps,
+              45.2 * fps,
+              45.4 * fps,
             ],
             [
-              "206px 473px",
-              "206px 362px",
-              "207.3px 355.5px",
-              "211px 350px",
-              "216.5px 346.3px",
-              "223px 345px",
-              "710px 345px",
+              "250px 550px",
+              "250px 550px",
+              "258px 548px",
+              "271px 541px",
+              "414px 398px",
+              "431px 386px",
+              "446px 381px",
+              "458px 380px",
+              "1130px 380px",
+              "1130px 380px",
+              "1210px 380px",
+              "1330px 380px",
+              "1450px 380px",
+              "1480px 380px",
+              "1210px 380px",
+              "458px 380px",
+              "446px 379px",
+              "431px 374px",
+              "414px 362px",
+              "271px 219px",
+              "250px 210px",
+              "250px 210px",
             ],
             {
-              easing: [
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.bezier(0, 0, 0.35, 1),
-              ],
+              easing: Easing.linear,
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
             },
@@ -187,52 +139,117 @@ const PixelAirportContent = () => {
         }}
       />
       <AirportAircraft
-        name="OpenAir 2 — right taxiway queue"
-        flightId="OA-206"
-        status="Waiting on CC-104"
-        priority={false}
+        name="OpenAir — yields and rejoins"
         airline="OpenAir"
-        labelPosition="below"
+        airframe="widebody"
+        status={
+          frame < 5 * fps
+            ? "Next for review"
+            : frame < 11.5 * fps
+              ? "Yielding · urgent first"
+              : frame < 15.3 * fps
+                ? "Rejoining queue"
+                : frame < 22.5 * fps
+                  ? "Next after urgent"
+                  : frame < 25 * fps
+                    ? "Taking off"
+                    : frame < 44 * fps
+                      ? "In flight"
+                      : frame < 44.8 * fps
+                        ? "On approach"
+                        : frame < 47.4 * fps
+                          ? "Landed · slowing"
+                          : frame < 49.4 * fps
+                            ? "Taxiing in"
+                            : "Ready for review"
+        }
+        priority={false}
+        labelPosition={frame < 44 * fps ? "above" : "below"}
+        altitude={interpolate(
+          frame,
+          [24 * fps, 25 * fps, 44 * fps, 44.8 * fps, 45.1 * fps],
+          [0, 1, 1, 0.2, 0],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
         premountFor={fps}
         width={192}
-        height={286}
-        heading={interpolate(frame, [3.1 * fps, 3.7 * fps], [90, 0], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })}
+        height={332}
+        heading={interpolate(
+          frame,
+          [
+            0 * fps,
+            2.5 * fps,
+            3.1 * fps,
+            14 * fps,
+            14.7 * fps,
+            25 * fps,
+            44 * fps,
+            47.4 * fps,
+            47.9 * fps,
+            49 * fps,
+            49.2 * fps,
+          ],
+          [90, 90, 135, 135, 90, 90, 270, 270, 225, 225, 270],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
         style={{
           position: "absolute",
           left: -96,
-          top: -142,
+          top: -164,
           translate: interpolate(
             frame,
             [
-              1.4 * fps,
+              0 * fps,
+              2.5 * fps,
               3.1 * fps,
-              3.25 * fps,
-              3.4 * fps,
-              3.55 * fps,
-              3.7 * fps,
-              4 * fps,
+              11.5 * fps,
+              12 * fps,
+              14 * fps,
+              14.3 * fps,
+              14.5 * fps,
+              14.7 * fps,
+              15.3 * fps,
+              22.5 * fps,
+              24 * fps,
+              24.5 * fps,
+              25 * fps,
+              44 * fps,
+              44.8 * fps,
+              47.4 * fps,
+              47.5 * fps,
+              47.7 * fps,
+              47.9 * fps,
+              49 * fps,
+              49.2 * fps,
+              49.4 * fps,
             ],
             [
-              "890px 486px",
-              "1048px 486px",
-              "1051.8px 485.2px",
-              "1055.1px 483.1px",
-              "1057.2px 479.8px",
-              "1058px 476px",
-              "1058px 473px",
+              "540px 210px",
+              "590px 210px",
+              "611px 219px",
+              "611px 219px",
+              "650px 258px",
+              "754px 362px",
+              "771px 374px",
+              "786px 379px",
+              "798px 380px",
+              "880px 380px",
+              "880px 380px",
+              "1210px 380px",
+              "1330px 380px",
+              "1450px 380px",
+              "1480px 380px",
+              "1210px 380px",
+              "458px 380px",
+              "446px 381px",
+              "431px 386px",
+              "414px 398px",
+              "271px 541px",
+              "250px 550px",
+              "250px 550px",
             ],
             {
-              easing: [
-                Easing.bezier(0.4, 0, 1, 1),
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-              ],
+              easing: Easing.linear,
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
             },
@@ -240,52 +257,111 @@ const PixelAirportContent = () => {
         }}
       />
       <AirportAircraft
-        name="Cloud Code 3 — middle taxiway queue"
-        flightId="CC-112"
-        status="Needs your input"
-        priority={false}
+        name="Cloud Code — moves into the reordered queue"
         airline="Cloud Code"
-        labelPosition="below"
+        airframe="widebody"
+        status={
+          frame < 13.5 * fps
+            ? "Tests passed · queued"
+            : frame < 18.5 * fps
+              ? "Queue reshuffled"
+              : frame < 25.5 * fps
+                ? "Ready for takeoff"
+                : frame < 28.3 * fps
+                  ? "Taking off"
+                  : frame < 48 * fps
+                    ? "In flight"
+                    : frame < 48.8 * fps
+                      ? "On approach"
+                      : frame < 50.5 * fps
+                        ? "Landed · slowing"
+                        : frame < 52.5 * fps
+                          ? "Taxiing in"
+                          : "Ready for review"
+        }
+        priority={false}
+        labelPosition="above"
+        altitude={interpolate(
+          frame,
+          [27.3 * fps, 28.3 * fps, 48 * fps, 48.8 * fps, 49.1 * fps],
+          [0, 1, 1, 0.2, 0],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
         premountFor={fps}
         width={192}
-        height={286}
-        heading={interpolate(frame, [4.3 * fps, 4.9 * fps], [90, 0], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })}
+        height={332}
+        heading={interpolate(
+          frame,
+          [
+            0 * fps,
+            13.5 * fps,
+            14.1 * fps,
+            16.5 * fps,
+            17.2 * fps,
+            28.3 * fps,
+            48 * fps,
+            50.5 * fps,
+            51 * fps,
+            52.1 * fps,
+            52.3 * fps,
+          ],
+          [90, 90, 135, 135, 90, 90, 270, 270, 315, 315, 270],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
         style={{
           position: "absolute",
           left: -96,
-          top: -142,
+          top: -164,
           translate: interpolate(
             frame,
             [
-              2.6 * fps,
-              4.3 * fps,
-              4.45 * fps,
-              4.6 * fps,
-              4.75 * fps,
-              4.9 * fps,
-              5.2 * fps,
+              0 * fps,
+              13.5 * fps,
+              14.1 * fps,
+              16.5 * fps,
+              16.8 * fps,
+              17 * fps,
+              17.2 * fps,
+              18.5 * fps,
+              25.5 * fps,
+              27.3 * fps,
+              27.8 * fps,
+              28.3 * fps,
+              48 * fps,
+              48.8 * fps,
+              50.5 * fps,
+              50.6 * fps,
+              50.8 * fps,
+              51 * fps,
+              52.1 * fps,
+              52.3 * fps,
+              52.5 * fps,
             ],
             [
-              "450px 486px",
-              "616px 486px",
-              "619.8px 485.2px",
-              "623.1px 483.1px",
-              "625.2px 479.8px",
-              "626px 476px",
-              "626px 473px",
+              "250px 210px",
+              "250px 210px",
+              "271px 219px",
+              "414px 362px",
+              "431px 374px",
+              "446px 379px",
+              "458px 380px",
+              "640px 380px",
+              "640px 380px",
+              "1210px 380px",
+              "1330px 380px",
+              "1450px 380px",
+              "1480px 380px",
+              "1210px 380px",
+              "798px 380px",
+              "786px 379px",
+              "771px 374px",
+              "754px 362px",
+              "611px 219px",
+              "590px 210px",
+              "590px 210px",
             ],
             {
-              easing: [
-                Easing.bezier(0.4, 0, 1, 1),
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-              ],
+              easing: Easing.linear,
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
             },
@@ -293,59 +369,329 @@ const PixelAirportContent = () => {
         }}
       />
       <AirportAircraft
-        name="OpenAir 3 — left taxiway queue"
-        flightId="OA-210"
-        status="Ready for review"
-        priority={false}
+        name="OpenAir — build completes"
         airline="OpenAir"
+        airframe="narrowbody"
+        status={
+          frame < 24 * fps
+            ? "Waiting on build"
+            : frame < 27 * fps
+              ? "Build passed · ready"
+              : frame < 30.2 * fps
+                ? "Joining the runway"
+                : frame < 32.3 * fps
+                  ? "Taking off"
+                  : frame < 52 * fps
+                    ? "In flight"
+                    : frame < 52.8 * fps
+                      ? "On approach"
+                      : frame < 54.5 * fps
+                        ? "Landed · slowing"
+                        : frame < 56.5 * fps
+                          ? "Taxiing in"
+                          : "Ready for review"
+        }
+        priority={false}
         labelPosition="below"
+        altitude={interpolate(
+          frame,
+          [31.3 * fps, 32.3 * fps, 52 * fps, 52.8 * fps, 53.1 * fps],
+          [0, 1, 1, 0.2, 0],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
         premountFor={fps}
         width={192}
-        height={286}
-        heading={interpolate(frame, [6.3 * fps, 6.9 * fps], [90, 0], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })}
+        height={332}
+        heading={interpolate(
+          frame,
+          [
+            0 * fps,
+            27 * fps,
+            27.5 * fps,
+            29.2 * fps,
+            29.8 * fps,
+            32.3 * fps,
+            52 * fps,
+            54.5 * fps,
+            55 * fps,
+            56.1 * fps,
+            56.3 * fps,
+          ],
+          [90, 90, 45, 45, 90, 90, 270, 270, 225, 225, 270],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
         style={{
           position: "absolute",
           left: -96,
-          top: -142,
+          top: -164,
           translate: interpolate(
             frame,
             [
-              4.6 * fps,
-              6.3 * fps,
-              6.45 * fps,
-              6.6 * fps,
-              6.75 * fps,
-              6.9 * fps,
-              7.2 * fps,
+              0 * fps,
+              27 * fps,
+              27.5 * fps,
+              29.2 * fps,
+              29.4 * fps,
+              29.6 * fps,
+              29.8 * fps,
+              30.5 * fps,
+              31.3 * fps,
+              31.8 * fps,
+              32.3 * fps,
+              52 * fps,
+              52.8 * fps,
+              54.5 * fps,
+              54.6 * fps,
+              54.8 * fps,
+              55 * fps,
+              56.1 * fps,
+              56.3 * fps,
+              56.5 * fps,
             ],
             [
-              "104px 486px",
-              "196px 486px",
-              "199.8px 485.2px",
-              "203.1px 483.1px",
-              "205.2px 479.8px",
-              "206px 476px",
-              "206px 473px",
+              "590px 550px",
+              "590px 550px",
+              "611px 541px",
+              "754px 398px",
+              "771px 386px",
+              "786px 381px",
+              "798px 380px",
+              "1050px 380px",
+              "1210px 380px",
+              "1330px 380px",
+              "1450px 380px",
+              "1480px 380px",
+              "1210px 380px",
+              "798px 380px",
+              "786px 381px",
+              "771px 386px",
+              "754px 398px",
+              "611px 541px",
+              "590px 550px",
+              "590px 550px",
             ],
             {
-              easing: [
-                Easing.bezier(0.4, 0, 1, 1),
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-                Easing.linear,
-              ],
+              easing: Easing.linear,
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
             },
           ),
         }}
       />
-      <AirportControlPanel name="Control tower UI" premountFor={fps} />
+      <AirportAircraft
+        name="Cloud Code — approval clears"
+        airline="Cloud Code"
+        airframe="widebody"
+        status={
+          frame < 30 * fps
+            ? "Waiting on approval"
+            : frame < 32 * fps
+              ? "Approved · ready"
+              : frame < 34.3 * fps
+                ? "Joining the runway"
+                : frame < 35.5 * fps
+                  ? "Taking off"
+                  : frame < 56 * fps
+                    ? "In flight"
+                    : frame < 56.8 * fps
+                      ? "On approach"
+                      : frame < 57.8 * fps
+                        ? "Landed · slowing"
+                        : frame < 59.8 * fps
+                          ? "Taxiing in"
+                          : "Ready for review"
+        }
+        priority={false}
+        labelPosition="above"
+        altitude={interpolate(
+          frame,
+          [34.6 * fps, 35.5 * fps, 56 * fps, 56.8 * fps, 57.1 * fps],
+          [0, 1, 1, 0.2, 0],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
+        premountFor={fps}
+        width={192}
+        height={332}
+        heading={interpolate(
+          frame,
+          [
+            0 * fps,
+            32 * fps,
+            32.5 * fps,
+            33.9 * fps,
+            34.3 * fps,
+            35.5 * fps,
+            56 * fps,
+            57.8 * fps,
+            58.3 * fps,
+            59.4 * fps,
+            59.6 * fps,
+          ],
+          [90, 90, 149, 149, 90, 90, 270, 270, 329, 329, 270],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
+        style={{
+          position: "absolute",
+          left: -96,
+          top: -164,
+          translate: interpolate(
+            frame,
+            [
+              0 * fps,
+              32 * fps,
+              32.5 * fps,
+              33.9 * fps,
+              34.1 * fps,
+              34.3 * fps,
+              34.6 * fps,
+              35 * fps,
+              35.5 * fps,
+              56 * fps,
+              56.8 * fps,
+              57.8 * fps,
+              57.9 * fps,
+              58.1 * fps,
+              58.3 * fps,
+              59.4 * fps,
+              59.6 * fps,
+              59.8 * fps,
+            ],
+            [
+              "1060px 210px",
+              "1060px 210px",
+              "1081px 229px",
+              "1160px 360px",
+              "1167px 374px",
+              "1178px 380px",
+              "1220px 380px",
+              "1330px 380px",
+              "1450px 380px",
+              "1480px 380px",
+              "1210px 380px",
+              "1178px 380px",
+              "1172px 378px",
+              "1165px 371px",
+              "1160px 360px",
+              "1081px 229px",
+              "1060px 210px",
+              "1060px 210px",
+            ],
+            {
+              easing: Easing.linear,
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            },
+          ),
+        }}
+      />
+      <AirportAircraft
+        name="OpenAir — dependency clears"
+        airline="OpenAir"
+        airframe="widebody"
+        status={
+          frame < 33.5 * fps
+            ? "Waiting on dependency"
+            : frame < 35 * fps
+              ? "Dependency cleared"
+              : frame < 37.5 * fps
+                ? "Joining the runway"
+                : frame < 38.9 * fps
+                  ? "Taking off"
+                  : frame < 60 * fps
+                    ? "In flight"
+                    : frame < 60.8 * fps
+                      ? "On approach"
+                      : frame < 61.8 * fps
+                        ? "Landed · slowing"
+                        : frame < 63.8 * fps
+                          ? "Taxiing in"
+                          : "Ready for review"
+        }
+        priority={false}
+        labelPosition="below"
+        altitude={interpolate(
+          frame,
+          [38 * fps, 38.9 * fps, 60 * fps, 60.8 * fps, 61.1 * fps],
+          [0, 1, 1, 0.2, 0],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
+        premountFor={fps}
+        width={192}
+        height={332}
+        heading={interpolate(
+          frame,
+          [
+            0 * fps,
+            35 * fps,
+            35.5 * fps,
+            37 * fps,
+            37.6 * fps,
+            38.9 * fps,
+            60 * fps,
+            61.8 * fps,
+            62.3 * fps,
+            63.4 * fps,
+            63.6 * fps,
+          ],
+          [90, 90, 45, 45, 90, 90, 270, 270, 225, 225, 270],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        )}
+        style={{
+          position: "absolute",
+          left: -96,
+          top: -164,
+          translate: interpolate(
+            frame,
+            [
+              0 * fps,
+              35 * fps,
+              35.5 * fps,
+              37 * fps,
+              37.2 * fps,
+              37.4 * fps,
+              37.6 * fps,
+              38 * fps,
+              38.4 * fps,
+              38.9 * fps,
+              60 * fps,
+              60.8 * fps,
+              61.8 * fps,
+              61.9 * fps,
+              62.1 * fps,
+              62.3 * fps,
+              63.4 * fps,
+              63.6 * fps,
+              63.8 * fps,
+            ],
+            [
+              "950px 550px",
+              "950px 550px",
+              "971px 541px",
+              "1114px 398px",
+              "1131px 386px",
+              "1146px 381px",
+              "1158px 380px",
+              "1220px 380px",
+              "1330px 380px",
+              "1450px 380px",
+              "1480px 380px",
+              "1210px 380px",
+              "1158px 380px",
+              "1146px 381px",
+              "1131px 386px",
+              "1114px 398px",
+              "971px 541px",
+              "950px 550px",
+              "950px 550px",
+            ],
+            {
+              easing: Easing.linear,
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            },
+          ),
+        }}
+      />
     </>
   );
 };
