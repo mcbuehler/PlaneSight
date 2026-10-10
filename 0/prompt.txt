@@ -1,0 +1,1 @@
+in the env you can find the GEMINI_API_KEY which you can also use for nanobanana for image gen
