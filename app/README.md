@@ -16,6 +16,8 @@ Put your `GEMINI_API_KEY` in the `.env` file at the repository root; `.env.examp
 
 `npm run setup` fetches [herdr-web-ui](https://github.com/devswha/herdr-web-ui) at the pinned commit in `scripts/setup.sh` into `app/vendor/` (not committed) and applies `integrations/herdr-web-ui-embedding.patch`. It is safe to run again. To use a checkout you already have, set `HERDR_WEB_UI_DIR` for both commands.
 
+The [five-agent demo and presenter cues](demo/team-release/DEMO.md) follow the original promo narration. Prepare the isolated scenario with `node app/scripts/setup-five-claudes.mjs --prepare` from the repository root.
+
 To show only the demo agents, start with `PLANESIGHT_ONLY=$HOME/.herdr/worktrees/<repo> npm run up`. To launch new agents on a cheaper model, add `CLAUDE_EXTRA="--model claude-haiku-5-5"`.
 
 For development, run `npm run server` and `npm run dev` instead, and open http://localhost:5173.
@@ -24,7 +26,7 @@ For development, run `npm run server` and `npm run dev` instead, and open http:/
 
 The top bar stays visible in both views. Its top-left **Herdr →** button opens the selected agent’s session (or the Herdr overview when no agents are available), then becomes **← Back to airport** in exactly the same place.
 
-The **Herdr** button in each plane's card opens that agent's chat in an embedded [herdr-web-ui](https://github.com/devswha/herdr-web-ui) view, in the same tab. Sending a message returns to the airport after Herdr confirms delivery. Failed sends stay open; queued messages return after delivery, preserving their live connection while waiting. **Back to airport** (or browser Back) also returns to the airport with the same plane selected. The web client also offers the live terminal.
+Click a plane or its name label to open that agent's chat directly in an embedded [herdr-web-ui](https://github.com/devswha/herdr-web-ui) view, in the same tab. There is no intervening popup. Sending a message returns to the airport after Herdr confirms delivery. Failed sends stay open; queued messages return after delivery, preserving their live connection while waiting. **Back to airport** (or browser Back) also returns to the airport with the same plane selected. The web client also offers the live terminal.
 
 `npm run setup` and `npm run up` take care of herdr-web-ui. Both servers must use the same Herdr socket: for a named Herdr session, set `HERDR_SOCKET_PATH` in `.env` before `npm run setup`. If the web client runs at another address, set `HERDR_WEB_URL`. Links use Herdr's pane ID to select the matching session.
 
@@ -32,21 +34,20 @@ The patch lets only the airport's origins (ports 7777 and 5173) frame herdr-web-
 
 ## The airport
 
-- **Hold lines:** the first three agents that need you wait at the three connectors, #1 on the right. More wait behind them on the taxiway.
-- **Outline colour:** red needs approval, blue needs a decision, green is ready for review, yellow is a collision.
+- **Airport sign:** the page header uses `src/assets/agent-airport-international.png`, copied from the AAI artwork in `../promo/public/branding/` used by the Remotion compositions.
+- **Departure order:** #1 waits on the runway, labeled “Next to depart.” The other agents form one line along the central north taxiway entry in the tower’s priority order. Each is labeled “After …”. When the first agent starts working, the next advances onto the runway.
+- **Outline colour:** red needs approval, blue needs a decision, green is ready for review, yellow means waiting behind another plane or needing attention.
 - **Airline:** Cloud Code planes are Claude Code agents, OpenAir planes are Codex agents.
-- **Stands at the concourse:** idle agents. Each keeps its stand; it pushes back before it taxis out. **Grass below:** agents in flight, circling.
-- **Click a plane** to answer it, send it a prompt, stop it, read its terminal output or open it in Herdr.
+- **Stands at the concourse:** idle agents. Each keeps its stand; it pushes back before it taxis out. Working agents are hidden until they need attention again.
+- **Click a plane or its name label** to go directly to its Herdr session, where you can send a message and inspect its terminal.
 - **Click the terminal**, or press N, to start a new agent in its own worktree.
 
 | Key | Action |
 |---|---|
-| Enter | Accept the proposal in the bubble |
-| E | Edit the text, then send it with ⌘Enter |
-| S | Skip: the agent leaves the queue until it needs you again |
+| Enter | Open the selected plane's Herdr session |
 | ← → or Tab | Choose another plane in the queue |
 | N | New flight |
-| Esc | Close the bubble |
+| Esc | Clear the selection or close the new-flight form |
 
 ## Layout
 

@@ -11,6 +11,7 @@ import * as gemini from "./gemini.mjs";
 import { sessionInfo } from "./entire.mjs";
 import * as ranker from "./ranker.mjs";
 import { findCollision } from "./collisions.mjs";
+import { QueueRanking } from "./queue-ranking.mjs";
 
 const PORT = Number(process.env.PORT ?? 7777);
 const ROOT = new URL("..", import.meta.url).pathname;
@@ -289,21 +290,22 @@ function teamItems() {
   return out;
 }
 
-let rankTimer = null;
-let lastRankSig = "";
-function scheduleRank() {
-  clearTimeout(rankTimer);
-  rankTimer = setTimeout(async () => {
-    const items = queueItems();
-    const sig = items.map((i) => `${i.key}:${i.card ? 1 : 0}:${i.collision ? 1 : 0}`).sort().join("|");
-    if (sig === lastRankSig) return;
-    lastRankSig = sig;
-    // the team's decision maker, when PLANESIGHT_RANKER points at it; otherwise the built-in ranking
-    ranking = (await ranker.rankWithTeam(teamItems(), DATA)) ?? (await gemini.rank(items, recentDecisions()));
+const queueRanking = new QueueRanking({
+  rank: async (items) => {
+    const teamOrder = await ranker.rankWithTeam(teamItems(), DATA);
+    if (teamOrder) return { order: teamOrder, failed: Boolean(ranker.status.error) };
+    const order = await gemini.rank(items, recentDecisions());
+    return { order, failed: Boolean(gemini.status.rankError) };
+  },
+  publish: (order) => {
+    ranking = order;
     log("ranked", ranking.map((r) => r.key.split(":")[0]).join(" "));
     broadcast();
-  }, 1200);
-}
+  },
+  onError: (error) => log("ranking failed", error.message),
+});
+
+function scheduleRank() { queueRanking.schedule(queueItems()); }
 
 // ---------------------------------------------------------------- decisions
 
