@@ -1,0 +1,1 @@
+stop. my team mates pushed a lot of progress. stash what we have, pull all the changes from remote and fold in our phaser approach. I want to do it properly though not run phaser from a cdn lets intall it and hava a proper web app. My team mates created the promo video and the art
