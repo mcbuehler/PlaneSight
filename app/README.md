@@ -37,7 +37,7 @@ The patch lets only the airport's origins (ports 7777 and 5173) frame herdr-web-
 ## The airport
 
 - **Airport sign:** the page header uses `src/assets/agent-airport-international.png`, copied from the AAI artwork in `../promo/public/branding/` used by the Remotion compositions.
-- **Departure order:** #1 waits on the runway, labeled “Next to depart.” The other agents form one line along the central north taxiway entry in the tower’s priority order. Each is labeled “After …”. When the first agent starts working, the next advances onto the runway.
+- **Departure order:** #1 waits on the runway, labeled “Next to depart.” The other agents form one line along the central north taxiway entry. Gemini ranks the initial batch; once a plane is in line, new arrivals and updated summaries cannot move it. New planes join behind the existing lineup. Each is labeled “After …”. When the first agent starts working, the next advances onto the runway. A returning agent joins the tail for its next task.
 - **Outline colour:** red needs approval, blue needs a decision, green is ready for review, yellow means waiting behind another plane or needing attention.
 - **Airline:** Cloud Code planes are Claude Code agents, OpenAir planes are Codex agents.
 - **Stands at the concourse:** idle agents. Each keeps its stand; it pushes back before it taxis out. Working agents are hidden until they need attention again.

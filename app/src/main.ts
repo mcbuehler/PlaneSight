@@ -112,12 +112,6 @@ function render() {
     });
   airport.scene.apply(views, selected === "new" ? null : selected);
 
-  const rankerSource = state.ranker?.source ?? "";
-  const usingGemini = rankerSource.startsWith("team")
-    ? rankerSource.includes("gemini") && !state.ranker?.error
-    : state.gemini.enabled && !state.gemini.lastError;
-  tower.dataset.mode = usingGemini ? "gemini" : "fallback";
-  $("tower-status").textContent = usingGemini ? "Keeping your agents in order." : "Using simple rules for now.";
   $("flight").textContent = g.flying.length ? `${g.flying.length} in flight` : "";
   $("overflow").textContent = overflow ? `+${overflow} more waiting` : "";
   updateNavigation();
@@ -129,7 +123,6 @@ function strip(p: Plane, spot: Spot): StripView | null {
   if (spot.tag === "none") return null;
   const ahead = state.planes.find((plane) => plane.session === spot.follows);
   return {
-    rank: (spot.rank ?? 0) + 1,
     name: name(p),
     status: spot.runway ? "Next to depart" : ahead ? `After ${name(ahead)}` : STATUS_WORD[tone(p)],
     next: spot.rank === 0,
@@ -159,8 +152,8 @@ function updateNavigation() {
   viewSwitch.textContent = showingHerdr ? "← Back to airport" : "Herdr →";
   viewSwitch.setAttribute("aria-label", showingHerdr ? "Back to airport" : "Open Herdr");
   viewSwitch.setAttribute("aria-controls", showingHerdr ? "stage" : "herdr-view");
-  $("view-title").textContent = showingHerdr ? "Herdr" : "Plane Sight";
-  $("view-session").textContent = showingHerdr && framedPane === "overview" ? "All sessions" : p?.name ?? p?.title ?? "";
+  $("view-heading").hidden = !showingHerdr;
+  $("view-session").textContent = showingHerdr && framedPane === "overview" ? "All sessions" : p ? name(p) : "";
 }
 
 function showHerdr(p?: Plane) {
@@ -174,7 +167,7 @@ function showHerdr(p?: Plane) {
   if (framedPane !== pane) {
     const url = new URL(p?.herdrUrl ?? state.herdrUrl ?? "http://127.0.0.1:7317/");
     url.searchParams.set("embed_origin", location.origin);
-    const frame = h("iframe", { src: url.href, title: p ? `Herdr: ${p.name ?? p.title ?? p.agent}` : "Herdr web" });
+    const frame = h("iframe", { src: url.href, title: p ? `Herdr: ${name(p)}` : "Herdr web" });
     $("herdr-frame-host").replaceChildren(frame);
     framedPane = pane;
     viewSwitch.focus();

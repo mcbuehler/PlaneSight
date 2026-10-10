@@ -37,7 +37,6 @@ const TONE_COLOR: Record<Tone, string> = {
 
 /** What a plane's flight strip says. */
 export interface StripView {
-  rank: number;
   name: string;
   status: string;
   /** #1 in the queue: amber paper. */
@@ -63,10 +62,10 @@ export interface AirportCallbacks {
 
 // The flight strips follow the promo's AirportAircraft tooltip: cream paper, a thick left edge,
 // Courier type, the airline's colour, amber for the next plane.
-const STRIP_W = 180;
-const STRIP_H = 51;
+const STRIP_W = 200;
+const STRIP_H = 69;
 /** Top-left corner of the strip relative to its plane, per placement (see Spot.tag). */
-const STRIP_AT = { left: { x: -232, y: -30 }, above: { x: -90, y: -88 }, below: { x: -90, y: 38 } } as const;
+const STRIP_AT = { left: { x: -252, y: -39 }, above: { x: -100, y: -106 }, below: { x: -100, y: 38 } } as const;
 const STRIP_FONT = '"Courier New", ui-monospace, monospace';
 const INK = {
   paper: 0xf7f5e9,
@@ -75,7 +74,6 @@ const INK = {
   edgeNext: 0x9a692c,
   selected: 0xffffff,
   shadow: 0x334d41,
-  rank: "#526557",
   status: "#526557",
   statusNext: "#86591c",
   statusAlert: "#a5630a",
@@ -85,7 +83,6 @@ const INK = {
 type StripObject = Phaser.GameObjects.Container & {
   edge: Phaser.GameObjects.Rectangle;
   paper: Phaser.GameObjects.Rectangle;
-  rank: Phaser.GameObjects.Text;
   name: Phaser.GameObjects.Text;
   status: Phaser.GameObjects.Text;
   /** The content it shows now; it is redrawn only when this changes. */
@@ -226,11 +223,10 @@ export class AirportScene extends Phaser.Scene {
     const shadow = this.add.rectangle(3, 3, STRIP_W, STRIP_H, INK.shadow, 0.2).setOrigin(0, 0);
     const edge = this.add.rectangle(0, 0, STRIP_W, STRIP_H, INK.edge).setOrigin(0, 0);
     const paper = this.add.rectangle(6, 2, STRIP_W - 8, STRIP_H - 4, INK.paper).setOrigin(0, 0);
-    const rank = text(13, true).setPosition(16, 9).setColor(INK.rank);
-    const name = text(15, true).setPosition(0, 7);
-    const status = text(11, false).setPosition(16, 31);
-    const strip = this.add.container(0, 0, [shadow, edge, paper, rank, name, status]) as StripObject;
-    Object.assign(strip, { edge, paper, rank, name, status, sig: "", at: STRIP_AT.left, shown: false });
+    const name = text(15, true).setPosition(16, 7).setWordWrapWidth(STRIP_W - 28, true);
+    const status = text(11, false).setPosition(16, 49);
+    const strip = this.add.container(0, 0, [shadow, edge, paper, name, status]) as StripObject;
+    Object.assign(strip, { edge, paper, name, status, sig: "", at: STRIP_AT.left, shown: false });
     strip.setDepth(35).setAlpha(0);
     // a click on the strip selects its plane
     edge.setInteractive({ useHandCursor: true }).on("pointerdown", () => this.callbacks.onSelect(session));
@@ -244,9 +240,8 @@ export class AirportScene extends Phaser.Scene {
     strip.sig = sig;
     strip.edge.setFillStyle(s.selected ? INK.selected : s.next ? INK.edgeNext : INK.edge);
     strip.paper.setFillStyle(s.next ? INK.paperNext : INK.paper);
-    strip.rank.setText(String(s.rank));
-    strip.name.setColor(INK.airline[view.airline]).setX(strip.rank.x + strip.rank.width + 8);
-    fit(strip.name, s.name, STRIP_W - 12 - strip.name.x);
+    strip.name.setColor(INK.airline[view.airline]);
+    fitTitle(strip.name, s.name);
     strip.status
       .setColor(s.alert ? INK.statusAlert : s.next ? INK.statusNext : INK.status)
       .setFontStyle(s.alert ? "bold" : "normal");
@@ -631,6 +626,18 @@ function lineTo(path: Phaser.Curves.Path, x: number, y: number) {
 function fit(text: Phaser.GameObjects.Text, value: string, width: number) {
   text.setText(value);
   for (let n = value.length - 1; text.width > width && n > 1; n--) text.setText(value.slice(0, n) + "…");
+}
+
+/** Conversation titles can use two lines before needing an ellipsis. */
+function fitTitle(text: Phaser.GameObjects.Text, value: string) {
+  const lines = text.getWrappedText(value);
+  const displayed = lines.slice(0, 2);
+  if (lines.length > 2) {
+    let lastLine = displayed[1].trimEnd();
+    while (lastLine && text.getWrappedText(lastLine + "…").length > 1) lastLine = lastLine.slice(0, -1).trimEnd();
+    displayed[1] = lastLine + "…";
+  }
+  text.setText(displayed.join("\n"));
 }
 
 /** Appends the curves of one path to another; Phaser's add() takes single curves only. */

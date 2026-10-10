@@ -10,7 +10,7 @@ Keep the original narration. The live example needs only five real Claude sessio
 | **accessibility** | An independent, routine review. |
 | **landing-page** | Cosmetic polish; can wait. |
 
-The entire live interaction is **Authentication → send one instruction → return to airport**. No billing decisions, extra test-failure storyline, merging, or terminal commands during the presentation. Click plane names, not memorized screen positions: Gemini can reorder the queue.
+The entire live interaction is **Authentication → send one instruction → return to airport**. No billing decisions, extra test-failure storyline, merging, or terminal commands during the presentation. Gemini ranks the initial lineup; waiting planes then keep their order, and returning planes join the tail. Click plane names to open their sessions.
 
 ## Original narration and presenter cues
 

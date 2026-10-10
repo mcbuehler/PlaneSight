@@ -30,7 +30,21 @@ export const airline = (p: Plane): Airline => (p.agent === "codex" ? "openair" :
 export const airframe = (p: Plane): Airframe => ((p.tokens ?? 0) >= WIDEBODY_TOKENS ? "widebody" : "narrowbody");
 export const AIRLINE_NAME: Record<Airline, string> = { "cloud-code": "Cloud Code", openair: "OpenAir" };
 
-export const name = (p: Plane) => p.name ?? p.need?.card?.title ?? p.title?.split(" ").slice(0, 3).join(" ") ?? p.session.slice(0, 6);
+// Readable conversation titles for the existing demo sessions. Match the task
+// title, not an agent's short handle, so unrelated agents keep their own title.
+const CONVERSATION_TITLES: Record<string, string> = {
+  "Landing.js copy polish": "Polish landing page copy",
+  "Dashboard workspace label and invite permission": "Add workspace invite controls",
+  "visibleProjects workspace isolation fix": "Fix workspace isolation",
+  "Bounded pagination for listProjects": "Add API pagination",
+  "Invite dialog focus cycling": "Fix invite dialog focus",
+};
+
+export function name(p: Plane) {
+  const title = p.title?.trim() || p.need?.card?.title?.trim();
+  if (title) return CONVERSATION_TITLES[title] ?? title;
+  return p.name?.replace(/[-_]+/g, " ") ?? p.session.slice(0, 6);
+}
 export const short = (s: string | null | undefined, n: number) => (s && s.length > n ? s.slice(0, n - 1) + "…" : s ?? "");
 
 export function waited(since: number | null | undefined) {
