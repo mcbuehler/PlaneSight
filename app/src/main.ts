@@ -5,7 +5,7 @@ import "./style.css";
 import logoUrl from "../../public/branding/plane-sight-logo.png?url";
 import { PLANE_SIZE, createAirport, screenResolution, type PlaneView, type StripView } from "./AirportScene";
 import { drawRoads } from "./airfield";
-import { H, STATUS_WORD, W, airframe, airline, flightId, groups, layout, name, tone, waited } from "./model";
+import { H, STATUS_WORD, W, airframe, airline, groups, layout, name, tone, waited } from "./model";
 import { EDIT_ACTION, decision, flightCard, h, newFlightForm, type BubbleActions } from "./ui";
 import type { Action, Plane, Spot, TowerState } from "./types";
 import { sentPane } from "./herdrEmbed";
@@ -14,7 +14,9 @@ const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getEleme
 const stage = $("stage");
 const viewport = stage.parentElement!;
 const herdrView = $("herdr-view");
+const viewSwitch = $<HTMLButtonElement>("switch-view");
 let framedPane: string | null = null;
+let lastHerdrPane: string | null = null;
 let returningToAirport = false;
 
 let state: TowerState = { now: 0, gemini: { enabled: false, lastError: null }, planes: [] };
@@ -41,7 +43,7 @@ const airport = createAirport($("game"), {
 }, roads);
 
 function fit() {
-  const s = Math.min(window.innerWidth / W, window.innerHeight / H);
+  const s = Math.min(viewport.clientWidth / W, viewport.clientHeight / H);
   stage.style.transform = `translate(-50%, -50%) scale(${s})`;
   airport.refresh();
 }
@@ -74,6 +76,7 @@ function render() {
   $("tower").title = state.ranker?.error ?? state.ranker?.explanation ?? "";
   $("flight").textContent = g.flying.length ? `${g.flying.length} in flight` : "";
   $("overflow").textContent = overflow ? `+${overflow} more waiting` : "";
+  updateNavigation();
   if (herdrView.hidden) renderBubble(spots);
 }
 
@@ -83,7 +86,6 @@ function strip(p: Plane, spot: Spot): StripView | null {
   return {
     rank: (spot.rank ?? 0) + 1,
     name: name(p),
-    flight: flightId(p),
     status: p.need?.collision ? `Collides with ${p.need.collision.other}` : STATUS_WORD[tone(p)],
     next: spot.rank === 0,
     alert: tone(p) === "alert",
@@ -129,23 +131,33 @@ function renderBubble(spots: ReturnType<typeof layout>["spots"]) {
 
 // ---------------------------------------------------------------- actions
 
-function showHerdr(p: Plane) {
-  if (!p.herdrUrl || !p.pane || returningToAirport) return;
+function updateNavigation() {
+  const showingHerdr = !herdrView.hidden;
+  const p = state.planes.find((plane) => plane.session === selected);
+  viewSwitch.textContent = showingHerdr ? "← Back to airport" : "Herdr →";
+  viewSwitch.setAttribute("aria-label", showingHerdr ? "Back to airport" : "Open Herdr");
+  viewSwitch.setAttribute("aria-controls", showingHerdr ? "stage" : "herdr-view");
+  $("view-title").textContent = showingHerdr ? "Herdr" : "Plane Sight";
+  $("view-session").textContent = showingHerdr && framedPane === "overview" ? "All sessions" : p?.name ?? p?.title ?? "";
+}
+
+function showHerdr(p?: Plane) {
+  if (returningToAirport || (p && (!p.herdrUrl || !p.pane))) return;
   // Keep the airport and its selection mounted; only the session view changes.
-  selected = p.session;
-  pinned = true;
+  if (p) { selected = p.session; pinned = true; lastHerdrPane = p.pane; }
   viewport.inert = true;
   viewport.setAttribute("aria-hidden", "true");
   herdrView.hidden = false;
-  $("herdr-session").textContent = p.name ?? p.title ?? p.agent;
-  if (framedPane !== p.pane) {
-    const url = new URL(p.herdrUrl);
+  const pane = p?.pane ?? "overview";
+  if (framedPane !== pane) {
+    const url = new URL(p?.herdrUrl ?? state.herdrUrl ?? "http://127.0.0.1:7317/");
     url.searchParams.set("embed_origin", location.origin);
-    const frame = h("iframe", { src: url.href, title: `Herdr: ${p.name ?? p.title ?? p.agent}` });
+    const frame = h("iframe", { src: url.href, title: p ? `Herdr: ${p.name ?? p.title ?? p.agent}` : "Herdr web" });
     $("herdr-frame-host").replaceChildren(frame);
-    framedPane = p.pane;
-    $("back-to-airport").focus();
+    framedPane = pane;
+    viewSwitch.focus();
   }
+  updateNavigation();
 }
 
 function hideHerdr() {
@@ -157,22 +169,36 @@ function hideHerdr() {
   viewport.inert = false;
   viewport.removeAttribute("aria-hidden");
   render();
-  document.querySelector<HTMLButtonElement>("[data-open-herdr]")?.focus();
+  viewSwitch.focus();
 }
 
 function syncHerdrRoute() {
   const pane = new URL(location.href).searchParams.get("herdr");
   if (!pane) { hideHerdr(); return; }
+  if (pane === "overview") { showHerdr(); return; }
   const p = state.planes.find((plane) => plane.pane === pane);
   if (p) showHerdr(p);
 }
 
 function openHerdr(p: Plane) {
   if (!p.herdrUrl || !p.pane) return;
+  navigateToHerdr(p.pane);
+}
+
+function navigateToHerdr(pane: string) {
   const url = new URL(location.href);
-  url.searchParams.set("herdr", p.pane);
+  url.searchParams.set("herdr", pane);
   history.pushState({ planeSightHerdr: true }, "", url);
-  showHerdr(p);
+  syncHerdrRoute();
+}
+
+function openHerdrFromBar() {
+  const available = state.planes.filter((p) => p.pane && p.herdrUrl);
+  const target = available.find((p) => p.session === selected)
+    ?? available.find((p) => p.pane === lastHerdrPane)
+    ?? groups(state, departing).queue.find((p) => p.pane && p.herdrUrl)
+    ?? available[0];
+  navigateToHerdr(target?.pane ?? "overview");
 }
 
 function returnToAirport() {
@@ -189,7 +215,10 @@ function returnToAirport() {
   }
 }
 
-$("back-to-airport").addEventListener("click", returnToAirport);
+viewSwitch.addEventListener("click", () => {
+  if (herdrView.hidden) openHerdrFromBar();
+  else returnToAirport();
+});
 window.addEventListener("message", (event) => {
   if (herdrView.hidden) return;
   const frame = $("herdr-frame-host").querySelector("iframe");

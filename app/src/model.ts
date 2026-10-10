@@ -30,13 +30,6 @@ export const airline = (p: Plane): Airline => (p.agent === "codex" ? "openair" :
 export const airframe = (p: Plane): Airframe => ((p.tokens ?? 0) >= WIDEBODY_TOKENS ? "widebody" : "narrowbody");
 export const AIRLINE_NAME: Record<Airline, string> = { "cloud-code": "Cloud Code", openair: "OpenAir" };
 
-/** A stable flight number per agent session, such as CC-104. */
-export function flightId(p: Plane) {
-  let hash = 0;
-  for (const ch of p.session) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-  return `${airline(p) === "openair" ? "OA" : "CC"}-${100 + (hash % 900)}`;
-}
-
 export const name = (p: Plane) => p.name ?? p.need?.card?.title ?? p.title?.split(" ").slice(0, 3).join(" ") ?? p.session.slice(0, 6);
 export const short = (s: string | null | undefined, n: number) => (s && s.length > n ? s.slice(0, n - 1) + "…" : s ?? "");
 

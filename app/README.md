@@ -18,6 +18,8 @@ To show only the demo agents, start the server with `PLANESIGHT_ONLY=$HOME/.herd
 
 ### Open a session in Herdr
 
+The top bar stays visible in both views. Its top-left **Herdr →** button opens the selected agent’s session (or the Herdr overview when no agents are available), then becomes **← Back to airport** in exactly the same place.
+
 The **Herdr** button in each plane's card opens that agent's chat in an embedded [herdr-web-ui](https://github.com/devswha/herdr-web-ui) view, in the same tab. Sending a message returns to the airport after Herdr confirms delivery. Failed sends stay open; queued messages return after delivery, preserving their live connection while waiting. **Back to airport** (or browser Back) also returns to the airport with the same plane selected. The web client also offers the live terminal.
 
 Run herdr-web-ui separately on `http://127.0.0.1:7317`. Both servers must connect to the same Herdr socket: set `HERDR_SOCKET_PATH` for Plane Sight and `HERDR_SOCKET` for herdr-web-ui. For a named session, use `~/.config/herdr/sessions/<name>/herdr.sock` (expand `~` in the environment value).

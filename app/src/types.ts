@@ -45,6 +45,7 @@ export interface Plane {
 
 export interface TowerState {
   now: number;
+  herdrUrl?: string | null;
   gemini: { enabled: boolean; lastError: string | null };
   /** Which decision maker ranked the queue: "built-in", or "team (gemini)" / "team (heuristic)". */
   ranker?: { source: string; error: string | null; explanation: string | null };

@@ -8,15 +8,16 @@ const SOCK = process.env.HERDR_SOCKET_PATH ?? path.join(os.homedir(), ".config/h
 let seq = 0;
 
 // The browser client selects an agent by its Herdr pane, not its Claude/Codex session ID.
-export function webUrl(paneId) {
-  if (!paneId) return null;
+export function webUrl(paneId = null) {
   let url;
   try { url = new URL(process.env.HERDR_WEB_URL ?? "http://127.0.0.1:7317/"); }
   catch { return null; }
   if (url.protocol !== "http:" && url.protocol !== "https:") return null;
-  url.searchParams.set("machine", "local");
-  url.searchParams.set("pane", paneId);
-  url.searchParams.set("view", "chat");
+  if (paneId) {
+    url.searchParams.set("machine", "local");
+    url.searchParams.set("pane", paneId);
+    url.searchParams.set("view", "chat");
+  }
   return url.href;
 }
 

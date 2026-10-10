@@ -1,5 +1,5 @@
 // The HTML layer over the airport: the bubble. The flight strips are drawn in AirportScene.ts.
-import { AIRLINE_NAME, STATUS_WORD, airline, flightId, name, short, tone, waited } from "./model";
+import { AIRLINE_NAME, STATUS_WORD, airline, name, short, tone, waited } from "./model";
 import type { Action, Need, Plane } from "./types";
 
 type Child = Node | string | null | undefined | false | Child[];
@@ -43,7 +43,7 @@ export const EDIT_ACTION: Partial<Record<Action, Action>> = { allow: "deny", dis
 function head(p: Plane) {
   return h("div", { class: "bubble-head" },
     h("strong", {}, short(name(p), 24)),
-    h("small", {}, `${AIRLINE_NAME[airline(p)]} ${flightId(p)}`),
+    h("small", {}, AIRLINE_NAME[airline(p)]),
     h("span", { class: "kind" }, STATUS_WORD[tone(p)]),
     h("span", { class: "wait" }, p.need ? waited(p.need.since) : ""));
 }
