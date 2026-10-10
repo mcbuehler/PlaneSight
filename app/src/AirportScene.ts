@@ -39,7 +39,6 @@ const TONE_COLOR: Record<Tone, string> = {
 export interface StripView {
   rank: number;
   name: string;
-  flight: string;
   status: string;
   /** #1 in the queue: amber paper. */
   next: boolean;
@@ -77,7 +76,6 @@ const INK = {
   selected: 0xffffff,
   shadow: 0x334d41,
   rank: "#526557",
-  flight: "#66736b",
   status: "#526557",
   statusNext: "#86591c",
   statusAlert: "#a5630a",
@@ -89,7 +87,6 @@ type StripObject = Phaser.GameObjects.Container & {
   paper: Phaser.GameObjects.Rectangle;
   rank: Phaser.GameObjects.Text;
   name: Phaser.GameObjects.Text;
-  flight: Phaser.GameObjects.Text;
   status: Phaser.GameObjects.Text;
   /** The content it shows now; it is redrawn only when this changes. */
   sig: string;
@@ -231,10 +228,9 @@ export class AirportScene extends Phaser.Scene {
     const paper = this.add.rectangle(6, 2, STRIP_W - 8, STRIP_H - 4, INK.paper).setOrigin(0, 0);
     const rank = text(13, true).setPosition(16, 9).setColor(INK.rank);
     const name = text(15, true).setPosition(0, 7);
-    const flight = text(11, false).setOrigin(1, 0).setPosition(STRIP_W - 12, 10).setColor(INK.flight);
     const status = text(11, false).setPosition(16, 31);
-    const strip = this.add.container(0, 0, [shadow, edge, paper, rank, name, flight, status]) as StripObject;
-    Object.assign(strip, { edge, paper, rank, name, flight, status, sig: "", at: STRIP_AT.left, shown: false });
+    const strip = this.add.container(0, 0, [shadow, edge, paper, rank, name, status]) as StripObject;
+    Object.assign(strip, { edge, paper, rank, name, status, sig: "", at: STRIP_AT.left, shown: false });
     strip.setDepth(35).setAlpha(0);
     // a click on the strip selects its plane
     edge.setInteractive({ useHandCursor: true }).on("pointerdown", () => this.callbacks.onSelect(session));
@@ -249,9 +245,8 @@ export class AirportScene extends Phaser.Scene {
     strip.edge.setFillStyle(s.selected ? INK.selected : s.next ? INK.edgeNext : INK.edge);
     strip.paper.setFillStyle(s.next ? INK.paperNext : INK.paper);
     strip.rank.setText(String(s.rank));
-    strip.flight.setText(s.flight);
     strip.name.setColor(INK.airline[view.airline]).setX(strip.rank.x + strip.rank.width + 8);
-    fit(strip.name, s.name, strip.flight.x - strip.flight.width - 8 - strip.name.x);
+    fit(strip.name, s.name, STRIP_W - 12 - strip.name.x);
     strip.status
       .setColor(s.alert ? INK.statusAlert : s.next ? INK.statusNext : INK.status)
       .setFontStyle(s.alert ? "bold" : "normal");
