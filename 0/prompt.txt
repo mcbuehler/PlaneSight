@@ -1,0 +1,1 @@
+we dont have to do the decision maker. my team mate works on that. just work on presentation and how we would pass data to the gemini decision maker
