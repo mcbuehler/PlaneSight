@@ -74,3 +74,8 @@ npx remotion render src/index.ts PlaneSightPromo out/plane-sight-promo.mp4
 Generated previews and exports in `out/`, the bundle in `build/`, and the restored
 full-size MP4 are ignored by Git. Keep source edits in `src/` and new artwork in
 `public/`.
+
+The webcam source includes the improved audio recording. The promo plays
+normalized audio tracks from `public/audio/`; regenerate them with
+`npm run normalize-audio` (requires FFmpeg). This also removes the replacement
+audio's 2,048-sample delay so the existing cuts and captions remain in sync.

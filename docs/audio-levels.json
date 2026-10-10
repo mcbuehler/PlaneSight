@@ -1,0 +1,51 @@
+{
+  "target": {
+    "integratedLufs": -16,
+    "truePeakDbtp": -1.5,
+    "loudnessRangeLu": 7
+  },
+  "sampleRate": 48000,
+  "channels": 2,
+  "clips": [
+    {
+      "name": "Presenter narration",
+      "source": "public/webcam1791640657618.mp4",
+      "normalizedAudio": "public/audio/presenter-normalized.wav",
+      "audioOffsetSeconds": 0.042666666666666665,
+      "audibleRangeSeconds": [
+        3.3333333333333335,
+        91.83333333333333
+      ],
+      "before": {
+        "integratedLufs": -16.79,
+        "truePeakDbtp": -3.86,
+        "loudnessRangeLu": 3.6
+      },
+      "after": {
+        "integratedLufs": -15.83,
+        "truePeakDbtp": -1.5,
+        "loudnessRangeLu": 3.4
+      }
+    },
+    {
+      "name": "Flight crew",
+      "source": "public/scenes/team-scene.mp4",
+      "normalizedAudio": "public/audio/flight-crew-normalized.wav",
+      "audioOffsetSeconds": 0,
+      "audibleRangeSeconds": [
+        0.7,
+        9.9
+      ],
+      "before": {
+        "integratedLufs": -17.15,
+        "truePeakDbtp": -0.69,
+        "loudnessRangeLu": 12.8
+      },
+      "after": {
+        "integratedLufs": -16.51,
+        "truePeakDbtp": -1.5,
+        "loudnessRangeLu": 6.8
+      }
+    }
+  ]
+}

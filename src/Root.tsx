@@ -10,6 +10,7 @@ import { AirportLayout } from "./AirportLayout";
 import { EightAgentsIntro } from "./EightAgentsIntro";
 import { PresenterNarration } from "./PresenterNarration";
 import { FlightCrewScene } from "./FlightCrewScene";
+import { AgentAirportSign } from "./AgentAirportSign";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -34,6 +35,14 @@ export const RemotionRoot: React.FC = () => {
         id="EightAgentsIntro"
         component={EightAgentsIntro}
         durationInFrames={243}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="AgentAirportSign"
+        component={AgentAirportSign}
+        durationInFrames={120}
         fps={30}
         width={1280}
         height={720}

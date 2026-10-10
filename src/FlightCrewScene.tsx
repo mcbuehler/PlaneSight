@@ -1,4 +1,4 @@
-import { Video } from "@remotion/media";
+import { Audio, Video } from "@remotion/media";
 import {
   CanvasImage,
   Interactive,
@@ -15,9 +15,15 @@ const FlightCrewSceneContent = () => {
 
   return (
     <>
+      <Audio
+        name="Normalized flight crew"
+        src={staticFile("audio/flight-crew-normalized.wav")}
+        premountFor={fps}
+      />
       <Video
-        name="Flight crew — original audio"
+        name="Flight crew footage"
         src={staticFile("scenes/team-scene.mp4")}
+        muted
         premountFor={fps}
         objectFit="cover"
         style={{ position: "absolute", width: "100%", height: "100%" }}

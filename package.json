@@ -31,6 +31,7 @@
     "typescript": "5.9.3"
   },
   "scripts": {
+    "normalize-audio": "node scripts/normalize-audio.mjs",
     "restore-media": "node scripts/restore-media.mjs",
     "predev": "npm run restore-media",
     "dev": "remotion studio",
