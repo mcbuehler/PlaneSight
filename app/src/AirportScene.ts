@@ -1,11 +1,11 @@
 // The airfield in Phaser: terrain, roads, planes, their motion and the takeoff.
 // main.ts owns the data; the HTML layer (ui.ts) draws only the bubble on top.
 import Phaser from "phaser";
-import terrainUrl from "../../public/airport/airport-terrain-v2.png?url";
-import ccNarrowUrl from "../../public/airlines/cloud-code-narrowbody-orange.png?url";
-import ccWideUrl from "../../public/airlines/cloud-code-widebody-orange.png?url";
-import oaNarrowUrl from "../../public/airlines/openair-plane-top-down.png?url";
-import oaWideUrl from "../../public/airlines/openair-widebody.png?url";
+import terrainUrl from "./assets/airport-terrain-v2.png?url";
+import ccNarrowUrl from "./assets/cloud-code-narrowbody-orange.png?url";
+import ccWideUrl from "./assets/cloud-code-widebody-orange.png?url";
+import oaNarrowUrl from "./assets/openair-plane-top-down.png?url";
+import oaWideUrl from "./assets/openair-widebody.png?url";
 import { ENTRIES, H, NORTH_Y, RUNWAY_Y, SOUTH_Y, W, pathFromSvg, type Entry } from "./airfield";
 import type { Airframe, Airline, Spot, Tone } from "./types";
 

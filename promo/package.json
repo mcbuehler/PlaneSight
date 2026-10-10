@@ -1,0 +1,46 @@
+{
+  "name": "plane-sight-promo",
+  "version": "1.0.0",
+  "description": "Plane Sight promo video and airport art, built with Remotion",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mcbuehler/PlaneSight.git"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "@mediabunny/server": "1.56.1",
+    "@remotion/captions": "4.0.534",
+    "@remotion/cli": "4.0.534",
+    "@remotion/media": "4.0.534",
+    "@remotion/tailwind-v4": "4.0.534",
+    "@remotion/whisper-webgpu": "4.0.534",
+    "mediabunny": "1.56.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.534",
+    "tailwindcss": "4.0.0"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.534",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "9.39.5",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "normalize-audio": "node scripts/normalize-audio.mjs",
+    "restore-media": "node scripts/restore-media.mjs",
+    "predev": "npm run restore-media",
+    "dev": "remotion studio",
+    "prebuild": "npm run restore-media",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}

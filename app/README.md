@@ -1,20 +1,24 @@
 # Plane Sight app
 
-The live airport over the coding agents that run in Herdr. It uses the team's art from `../public/` (the airport, the Cloud Code and OpenAir planes, the logo) and draws it with Phaser 4. Gemini ranks the agents that need you and drafts the answer.
+The live airport over the coding agents that run in Herdr. It uses copies of the team's art in `src/assets/` (the airport, the Cloud Code and OpenAir planes, the logo; the originals are in `../promo/public/`) and draws it with Phaser 4. Gemini ranks the agents that need you and drafts the answer.
 
 ## Run it
 
+You need Node 22.12 or newer, [Bun](https://bun.sh), git and [Herdr](https://herdr.dev) (built on 0.9.3), with Herdr running. Agents need Claude Code (`claude`) or Codex (`codex`). The [Entire CLI](https://entire.io) is optional and fills the flight recorder.
+
 ```sh
 cd app
-npm install
-echo "GEMINI_API_KEY=..." > ../.env     # without it, simple rules replace Gemini
-npm run server                          # the backend on :7777 (hooks, Herdr, Gemini, Entire)
-npm run dev                             # the app on http://localhost:5173
+npm run setup    # once: installs the app, builds herdr-web-ui with our patch, creates ../.env
+npm run up       # starts herdr-web-ui on :7317 and Plane Sight on http://127.0.0.1:7777
 ```
 
-For the demo, build once and let the server serve the app: `npm start`, then open http://127.0.0.1:7777.
+Put your `GEMINI_API_KEY` in the `.env` file at the repository root; `.env.example` lists the other settings. Without a key, simple rules replace Gemini. `npm run up` stops both servers on Ctrl+C. Logs from herdr-web-ui go to `app/data/logs/`.
 
-To show only the demo agents, start the server with `PLANESIGHT_ONLY=$HOME/.herdr/worktrees/<repo> npm run server`. To launch new agents on a cheaper model, add `CLAUDE_EXTRA="--model claude-haiku-5-5"`.
+`npm run setup` fetches [herdr-web-ui](https://github.com/devswha/herdr-web-ui) at the pinned commit in `scripts/setup.sh` into `app/vendor/` (not committed) and applies `integrations/herdr-web-ui-embedding.patch`. It is safe to run again. To use a checkout you already have, set `HERDR_WEB_UI_DIR` for both commands.
+
+To show only the demo agents, start with `PLANESIGHT_ONLY=$HOME/.herdr/worktrees/<repo> npm run up`. To launch new agents on a cheaper model, add `CLAUDE_EXTRA="--model claude-haiku-5-5"`.
+
+For development, run `npm run server` and `npm run dev` instead, and open http://localhost:5173.
 
 ### Open a session in Herdr
 
@@ -22,13 +26,9 @@ The top bar stays visible in both views. Its top-left **Herdr →** button opens
 
 The **Herdr** button in each plane's card opens that agent's chat in an embedded [herdr-web-ui](https://github.com/devswha/herdr-web-ui) view, in the same tab. Sending a message returns to the airport after Herdr confirms delivery. Failed sends stay open; queued messages return after delivery, preserving their live connection while waiting. **Back to airport** (or browser Back) also returns to the airport with the same plane selected. The web client also offers the live terminal.
 
-Run herdr-web-ui separately on `http://127.0.0.1:7317`. Both servers must connect to the same Herdr socket: set `HERDR_SOCKET_PATH` for Plane Sight and `HERDR_SOCKET` for herdr-web-ui. For a named session, use `~/.config/herdr/sessions/<name>/herdr.sock` (expand `~` in the environment value).
+`npm run setup` and `npm run up` take care of herdr-web-ui. Both servers must use the same Herdr socket: for a named Herdr session, set `HERDR_SOCKET_PATH` in `.env` before `npm run setup`. If the web client runs at another address, set `HERDR_WEB_URL`. Links use Herdr's pane ID to select the matching session.
 
-If the web client runs at another address, set `HERDR_WEB_URL` in Plane Sight's `app/.env` and restart the Plane Sight server. Links use Herdr's pane ID to select the matching session, rather than relying on whichever terminal was last focused.
-
-Herdr blocks embedding by default. Apply `integrations/herdr-web-ui-embedding.patch` in the herdr-web-ui checkout and set `HERDR_WEB_FRAME_ANCESTORS=http://127.0.0.1:7777,http://localhost:7777` in its `.env`, then restart its server. Include the exact airport origin you use (for Vite development, port `5173`). This permits only those configured origins to frame Herdr and leaves its other content-security rules enforced.
-
-Rebuild the Herdr client after applying the patch. Plane Sight passes `embed_origin` to opt into a `herdr:message-sent` notification containing only the machine and pane IDs. The airport accepts it only from its current iframe and that frame's exact origin; standalone Herdr sessions do not send notifications.
+The patch lets only the airport's origins (ports 7777 and 5173) frame herdr-web-ui and keeps its other content-security rules. Plane Sight passes `embed_origin` to opt into a `herdr:message-sent` notification containing only the machine and pane IDs. The airport accepts it only from its current iframe and that frame's exact origin; standalone Herdr sessions do not send notifications.
 
 ## The airport
 

@@ -1,67 +1,38 @@
 # Plane Sight
 
-Plane Sight is an air-traffic-control metaphor for coordinating coding agents:
-bring actionable sessions to the front, keep agents in flight out of the way,
-and make dependencies visible before they collide.
+Air traffic control for many coding agents that run in parallel in [Herdr](https://herdr.dev). Every agent is a plane on a pixel-art airfield. Agents that need you queue at the runway in the order the tower ranks them; Gemini drafts the answer and you accept it with one key. Built at the Agentic AI Hack Zürich, 10 October 2026.
 
-This repository includes the hackathon promo and the pixel-art UI prototype,
-merged from `plane-sight-promo` with its Git history preserved. The UI currently
-uses illustrative task data; it is not connected to live agent sessions.
+## Run it
 
-## Included compositions
-
-- **PlaneSightPromo** — trimmed presenter footage, captions, and animated logo.
-- **PixelAirport** — six animated aircraft, readable flight tooltips with task
-  and dependency status, and the terminal check-in sign.
-- **PixelAirlines** — top-down Cloud Code and OpenAir artwork.
-- **PlaneSightLogo**, **AirportAircraft**, and **AirportControlPanel** — reusable
-  components that can also be edited in their own Studio timelines.
-
-## Development setup
-
-Use Node.js 22 or newer and npm. All Remotion packages are pinned to the published
-`4.0.534` release; no separate Remotion checkout or package links are needed.
+You need Node 22.12 or newer, [Bun](https://bun.sh), git and Herdr (built on 0.9.3), with Herdr running. Agents need Claude Code or Codex.
 
 ```sh
-git clone https://github.com/mcbuehler/PlaneSight.git
-cd PlaneSight
-npm ci
-npm run dev
+npm run setup   # once: installs the app, builds the embedded Herdr web client, creates .env
+npm run up      # Plane Sight on http://127.0.0.1:7777
 ```
 
-Studio prints its local URL. Open `/PixelAirport` for the UI prototype or
-`/PlaneSightPromo` for the video.
+Put your `GEMINI_API_KEY` in `.env`; `.env.example` lists the other settings. For development with hot reload, use `npm run dev` and open http://localhost:5173. Details are in [app/README.md](app/README.md).
 
-```sh
-npm run lint          # ESLint and TypeScript
-npm run build         # Bundle the compositions into build/
-```
+## What is where
 
-## Artwork and footage
+| Folder | What it is |
+|---|---|
+| [`app/`](app/README.md) | The live airport: a Phaser 4 web app and a Node server that talks to Herdr, the agents' hooks, Gemini and Entire |
+| [`agent/`](agent/) | The tower's decision maker: ranks the agents that need you by urgency, with Gemini, and with rules when Gemini is unavailable. The app loads it directly ([how](app/docs/ranker.md)) |
+| [`promo/`](promo/README.md) | The promo video and the airport art, built with Remotion |
 
-Artwork and the caption transcript live in `public/`. The original footage is
-stored losslessly in four parts under `media/source-footage/`; every part is
-below GitHub's 100 MiB per-file limit. `npm run dev` and `npm run build` restore
-and verify the original video automatically. To restore it manually:
+## Commands
 
-```sh
-npm run restore-media
-```
+| Command | What it does |
+|---|---|
+| `npm run setup` | One-time setup of the app and herdr-web-ui |
+| `npm run up` | Builds the app and starts it with herdr-web-ui; Ctrl+C stops both |
+| `npm run dev` | The same with Vite and hot reload on :5173 |
+| `npm test` | Tests of the decision maker and the app |
+| `npm run typecheck` | Type check of the app |
+| `npm run promo` | Remotion Studio for the promo (run `npm ci` in `promo/` once) |
+| `npm run promo:build` | Bundles the promo |
 
-The restore command verifies SHA-256 checksums. It preserves an existing matching
-video and refuses to replace a different file. Run it before invoking Remotion
-directly, for example:
+## Session tracking
 
-```sh
-npx remotion still src/index.ts PixelAirport out/airport.png --frame=390
-npx remotion render src/index.ts PlaneSightPromo out/plane-sight-promo.mp4
-```
-
-Generated previews and exports in `out/`, the bundle in `build/`, and the restored
-full-size MP4 are ignored by Git. Keep source edits in `src/` and new artwork in
-`public/`.
-
-The webcam source includes the improved audio recording. The promo plays
-normalized audio tracks from `public/audio/`; regenerate them with
-`npm run normalize-audio` (requires FFmpeg). This also removes the replacement
-audio's 2,048-sample delay so the existing cuts and captions remain in sync.
+Claude Code sessions in this repository are recorded with [Entire](https://entire.io): the hooks are in `.claude/settings.json`, and `git push` uploads the checkpoints. Install the Entire CLI and sign in to take part; without it, the hooks do nothing.

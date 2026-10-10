@@ -2,7 +2,7 @@
 // Taxiway = agents that need you, in the tower's order. Gates and stands = idle agents.
 // Working agents are hidden until they need attention. Click a waiting plane to inspect it.
 import "./style.css";
-import logoUrl from "../../public/branding/plane-sight-logo.png?url";
+import logoUrl from "./assets/plane-sight-logo.png?url";
 import { PLANE_SIZE, createAirport, screenResolution, type PlaneView, type StripView } from "./AirportScene";
 import { drawRoads } from "./airfield";
 import { H, STATUS_WORD, W, airframe, airline, groups, layout, name, tone, waited } from "./model";
