@@ -1,5 +1,5 @@
 // Turns the server's agents into planes on the airfield: who needs you, who is parked, who is flying.
-import { BEHIND, ENTRIES, H, NORTH_Y, W } from "./airfield";
+import { BEHIND, ENTRIES, H, NORTH_Y, PARKED_SCALE, STANDS, W } from "./airfield";
 import type { Airframe, Airline, Plane, Spot, Tone, TowerState } from "./types";
 
 export { H, W };
@@ -57,9 +57,21 @@ export function groups(state: TowerState, departing: Set<string>) {
   return { queue, flying, parked };
 }
 
-// Stands for idle agents: two rows north of the north taxiway, clear of the terminal in the corner.
-const STANDS: { x: number; y: number }[] = [];
-for (const y of [128, 62]) for (let x = 250; x <= 1060; x += 90) STANDS.push({ x, y });
+// Each idle agent keeps its stand while it stays parked, so the others never shuffle along.
+const standOf = new Map<string, number>();
+
+function assignStands(parked: Plane[]) {
+  const here = new Set(parked.map((p) => p.session));
+  for (const session of standOf.keys()) if (!here.has(session)) standOf.delete(session);
+  const used = new Set(standOf.values());
+  for (const p of parked) {
+    if (standOf.has(p.session)) continue;
+    const free = STANDS.findIndex((_, i) => !used.has(i));
+    if (free < 0) break;
+    standOf.set(p.session, free);
+    used.add(free);
+  }
+}
 
 export function layout({ queue, flying, parked }: ReturnType<typeof groups>) {
   const spots = new Map<string, Spot>();
@@ -74,7 +86,11 @@ export function layout({ queue, flying, parked }: ReturnType<typeof groups>) {
     const taxiY = ENTRIES.find((e) => e.id === slot.entry)!.taxiY;
     spots.set(p.session, { x: slot.x, y: taxiY, heading: 90, scale: 1, kind: "queue", rank: i, entry: slot.entry, tag: taxiY === NORTH_Y ? "above" : "below" });
   });
-  STANDS.slice(0, parked.length).forEach((stand, i) => spots.set(parked[i].session, { ...stand, heading: 180, scale: 0.5, kind: "parked", tag: "none" }));
+  assignStands(parked);
+  for (const p of parked) {
+    const stand = STANDS[standOf.get(p.session) ?? -1];
+    if (stand) spots.set(p.session, { x: stand.x, y: stand.y, heading: 0, scale: PARKED_SCALE, kind: "parked", tag: "none" });
+  }
   const cols = Math.min(Math.max(flying.length, 1), 6);
   flying.forEach((p, i) => {
     const x = 330 + (i % cols) * (780 / Math.max(cols - 1, 1));
