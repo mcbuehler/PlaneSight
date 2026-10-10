@@ -1,0 +1,24 @@
+Base directory for this skill: /Users/max/.claude/plugins/cache/claude-plugins-official/mattpocock-skills/1.2.3/skills/productivity/grill-me
+
+Run a `/grilling` session.
+
+
+ARGUMENTS: Imagine you are coming back from lunch and you see 8 agents requiring your attention.
+Which one should you look into first? This is what Plane Sight is trying to help you decide.
+
+Your product development is like an airport. Agents are taking off from the terminal, spin their engines and generate trails before they land again. To prevent any unnecessary delays, a short turnaround time is crucial.
+
+Plane Sight acts as your air traffic controller. It hides agents which are in-flight, because they are not actionable. It recognizes the most urgent task in front of the line and identifies dependencies between agents, so they don’t collide.
+
+In our control tower sits our operator is Gemini 3.8 Flash, which sees all of your agent sessions from above and lines them up in the right order of priority.
+
+On the ground control we have Herdr, which takes command from our operators and leads the agents the right way.
+
+
+we are taking part in a hackathon this is our pitch idea.
+
+This is info for the hackathon:
+https://hack.entire.io/agentic-ai-hack-zurich-2026/
+@"[External] Google DeepMind x {Tech_ Europe}_ Agentic AI Hack Zürich brief.pdf"
+
+We have 3.5h left
