@@ -32,6 +32,7 @@ export interface Need {
 export interface Plane {
   session: string;
   pane: string | null;
+  herdrUrl: string | null;
   agent: string;
   name: string | null;
   title: string | null;

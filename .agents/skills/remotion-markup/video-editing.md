@@ -15,9 +15,10 @@ Choose the timeline structure based on the editing behavior:
 
 - Use independently positioned clips when moving or resizing one clip should
   not affect any other clip.
-- Use `<TransitionSeries>` for consecutive clips when changing one clip's
-  duration should reposition every later clip. It also supports transitions
-  and overlays.
+- Use `<Series>` for consecutive clips when changing one clip's duration should
+  reposition every later clip.
+- Use `<TransitionSeries>` when consecutive clips also need transitions or
+  overlays.
 
 Use `const {fps} = useVideoConfig()` in the enclosing composition and set
 `premountFor={fps}` on each timed clip, sequence, and overlay that supports it.
@@ -32,7 +33,7 @@ expression when the user trims or splits it.
 For a clip with synchronized captions or overlays, make a shared timing group
 the editable timeline item. Keep the video and its synchronized layers inside
 one `<Sequence>` for independently positioned clips, or inside the same
-`<TransitionSeries.Sequence>` for consecutive clips.
+`<Series.Sequence>` or `<TransitionSeries.Sequence>` for consecutive clips.
 
 Put the clip's `trimBefore`, `durationInFrames`, and `playbackRate` on that
 shared parent, plus `from` when using an independently positioned `<Sequence>`.
@@ -89,59 +90,58 @@ Use literal frame counts when they are already known;
 Moving or resizing one of these clips does not reposition later clips. Gaps and
 overlaps are therefore allowed.
 
-## Consecutive clips with `TransitionSeries`
+## Consecutive clips with `Series`
 
-Use `<TransitionSeries>` when the clips should remain adjacent. No transition
-components are needed for consecutive playback. The example below has no
-synchronized captions; for captioned clips, put the captions inside each
-sequence and move the video's trim to that shared sequence as described above:
+Use `<Series>` when the clips should remain adjacent and do not need
+transitions. The example below has no synchronized captions; for captioned
+clips, put the captions inside each sequence and move the video's trim to
+that shared sequence as described above:
 
 ```tsx
-import { TransitionSeries } from "@remotion/transitions";
-
-<TransitionSeries>
-  <TransitionSeries.Sequence name="Opening" durationInFrames={78} premountFor={fps}>
+<Series>
+  <Series.Sequence name="Opening" durationInFrames={78} premountFor={fps}>
     <Video
       src="https://remotion.media/video.mp4"
       trimBefore={0}
       premountFor={fps}
     />
-  </TransitionSeries.Sequence>
-  <TransitionSeries.Sequence name="Interview" durationInFrames={66} premountFor={fps}>
+  </Series.Sequence>
+  <Series.Sequence name="Interview" durationInFrames={66} premountFor={fps}>
     <Video
       src="https://remotion.media/video.webm"
       trimBefore={12}
       premountFor={fps}
     />
-  </TransitionSeries.Sequence>
-  <TransitionSeries.Sequence name="Closing" durationInFrames={90} premountFor={fps}>
+  </Series.Sequence>
+  <Series.Sequence name="Closing" durationInFrames={90} premountFor={fps}>
     <Video
       src="https://remotion.media/video.mp4"
       trimBefore={72}
       premountFor={fps}
     />
-  </TransitionSeries.Sequence>
-</TransitionSeries>
+  </Series.Sequence>
+</Series>
 ```
 
-The `<TransitionSeries.Sequence>` is the editable clip row. Changing its
+The `<Series.Sequence>` is the editable clip row. Changing its
 `durationInFrames` repositions every later sequence. Do not set `from` on a
-`<TransitionSeries.Sequence>`; the series calculates each start frame.
+`<Series.Sequence>`; the series calculates each start frame.
 
 Keep every sequence as a separate JSX node with a hardcoded `name` and
 `durationInFrames`. The child may also be a custom clip or scene component:
 
 ```tsx
-<TransitionSeries.Sequence name="Product demo" durationInFrames={150} premountFor={fps}>
+<Series.Sequence name="Product demo" durationInFrames={150} premountFor={fps}>
   <ProductDemo />
-</TransitionSeries.Sequence>
+</Series.Sequence>
 ```
 
 ## Consecutive clips with transitions
 
 Use `<TransitionSeries>` when the timeline needs transitions or overlays.
-Preserve the same one-source-node-per-clip structure. Put a clip's synchronized
-captions inside its sequence and apply shared timing to that parent:
+Preserve the same one-source-node-per-clip structure. As with `<Series>`, put
+a clip's synchronized captions inside its sequence and apply shared timing
+to that parent:
 
 ```tsx
 <TransitionSeries name="Video timeline">

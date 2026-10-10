@@ -15,60 +15,82 @@ If the markup is too complex for the Studio to make it interactive, then the val
 
 ## Prefer interactive components with their own timelines
 
-Use `Interactive.withSchema({wrapInSequence: true, layout: 'absolute-fill'})` for components that fill their parent. The wrapper provides their visual root and timeline item, and clips overflow by default, so the inner component can return a fragment. Put timing, premounting, dimensions, and per-instance styles on the exported component.
+Use `Interactive.withSchema({wrapInSequence: true})` for custom scenes, cards,
+titles, and other visual components whose props should be editable per instance.
+Expose meaningful content and appearance controls in an `InteractivitySchema`.
+Keep decorative implementation details inside the component.
 
-Keep visuals that belong together in the same component, so they move and trim together. An inner layout container can still provide alignment, clipping within a smaller area, or an animated group; a container that only fills the scene is usually unnecessary. Cards, text boxes, and SVGs with their own bounds can keep the default `layout: 'none'` and forward `style` to their visual root.
+The component must accept `style` and forward it to one visual root. Keep a
+shared root when transforms, cropping, or opacity should affect all its layers.
+Flatten redundant inner wrappers when their styles can move onto an existing
+element without changing layout or animation.
 
-```tsx title="Scene.tsx"
-import {Video} from '@remotion/media';
+```tsx title="LowerThird.tsx"
 import type React from 'react';
-import {Interactive, useVideoConfig, type InteractivitySchema} from 'remotion';
+import {Interactive, type InteractivitySchema} from 'remotion';
 
-type SceneProps = {
-  readonly title: string;
+type LowerThirdProps = {
+  readonly children: string;
+  readonly accentColor: string;
+  readonly style?: React.CSSProperties;
 };
 
-const SceneInner: React.FC<SceneProps> = ({title}) => {
-  const {fps} = useVideoConfig();
-
+const LowerThirdInner: React.FC<LowerThirdProps> = ({
+  children,
+  accentColor,
+  style,
+}) => {
   return (
-    <>
-      <Video
-        name="Background footage"
-        src="https://remotion.media/video.mp4"
-        premountFor={fps}
-        objectFit="cover"
-        style={{width: '100%', height: '100%'}}
-      />
-      <Interactive.Div
-        name="Scene title"
+    <Interactive.Div
+      style={{
+        position: 'absolute',
+        left: 80,
+        bottom: 80,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 20,
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: '20px 32px',
+        color: 'black',
+        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontSize: 48,
+        fontWeight: 600,
+        ...style,
+      }}
+    >
+      <div
         style={{
-          position: 'absolute',
-          left: 80,
-          bottom: 80,
-          color: 'white',
-          fontFamily: 'Helvetica, Arial, sans-serif',
-          fontSize: 80,
+          width: 8,
+          alignSelf: 'stretch',
+          borderRadius: 4,
+          backgroundColor: accentColor,
         }}
-      >
-        {title}
-      </Interactive.Div>
-    </>
+      />
+      {children}
+    </Interactive.Div>
   );
 };
 
-const sceneSchema = {
-  title: {type: 'string', default: '', description: 'Title'},
+const lowerThirdSchema = {
+  children: {type: 'text-content', default: '', description: 'Text'},
+  accentColor: {
+    type: 'color',
+    default: '#0b84f3',
+    description: 'Accent color',
+  },
 } as const satisfies InteractivitySchema;
 
-export const Scene = Interactive.withSchema({
-  Component: SceneInner,
-  componentName: 'Scene',
-  schema: sceneSchema,
+export const LowerThird = Interactive.withSchema({
+  Component: LowerThirdInner,
+  componentName: '<LowerThird>',
+  schema: lowerThirdSchema,
   wrapInSequence: true,
-  layout: 'absolute-fill',
 });
 ```
+
+Forwarding the injected `style` inside the component is required; keep editable
+styles inline at the component's call site.
 
 ### Choose schema fields
 
@@ -78,7 +100,7 @@ Keys may use dot notation, such as `style.color`.
 
 | Type                                                                         | Use for                                                      | Keyframable   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------- |
-| `string`                                                                     | Strings, such as a title, prompt, or code snippet            | No            |
+| `text-content`                                                               | Text, such as a title                                        | No            |
 | `number`                                                                     | Numbers, with optional `min`, `max`, `step`, `integer`       | Yes           |
 | `boolean`                                                                    | On/off switches                                              | Yes (hold)    |
 | `color`                                                                      | CSS color strings                                            | Yes           |
@@ -110,14 +132,6 @@ const cardSchema = {
 ```
 
 Also available: `Interactive.borderSchema`, and `Interactive.captionsSchema` for components that accept captions.
-For components that accept `React.ReactNode` children, add `...Interactive.childrenSchema`.
-It provides controls for children content and may evolve to support richer content.
-Currently, it uses a string field labeled "Text" with a default of `''`.
-If a component requires string-only children, declare an explicit `children` field with `type: 'string'` instead.
-`Interactive.textSchema` controls typography styles; `childrenSchema` controls content.
-The children fragment is not included in `baseSchema` or automatically added to custom components.
-Nested markup and computed children are currently read-only.
-`text-content` is a deprecated alias for the `string` field type.
 See [`InteractivitySchema`](https://www.remotion.dev/docs/interactivity-schema) for all options.
 
 ### Register reusable components as connected compositions
@@ -132,23 +146,24 @@ its parent. See
 parent independence.
 
 Register the same exported component reference that the parent renders. For the
-example above, use `component={Scene}`, not `SceneInner` or an inline wrapper.
+example above, use `component={LowerThird}`, not `LowerThirdInner` or an inline wrapper.
 With `wrapInSequence: true`, no extra `<Sequence>` is needed for the connection.
 
-```tsx title="src/Root.tsx"
+```tsx title="Root.tsx"
 import {Composition} from 'remotion';
-import {Scene} from './Scene';
+import {LowerThird} from './LowerThird';
 
 export const RemotionRoot = () => (
   <Composition
-    id="Scene"
-    component={Scene}
+    id="LowerThird"
+    component={LowerThird}
     width={1280}
     height={720}
     fps={30}
     durationInFrames={30}
     defaultProps={{
-      title: 'A new perspective',
+      children: 'Jane Doe, Product Designer',
+      accentColor: '#0b84f3',
     }}
   />
 );
@@ -168,14 +183,14 @@ props. Built-in interactive components and custom components made with
 `trimBefore`, `playbackRate`, and `premountFor` directly.
 
 ```tsx
-<Scene
-  name="Opening scene"
+<LowerThird
+  name="Lower third"
   from={30}
   durationInFrames={90}
-  premountFor={fps}
-  style={{opacity: 0.9}}
-  title="A new perspective"
-/>
+  accentColor="#0b84f3"
+>
+  Jane Doe, Product Designer
+</LowerThird>
 ```
 
 When removing a redundant sequence, move its timing and name to the child.
@@ -185,10 +200,10 @@ style expression at the call site still uses the caller's frame. Preserve that
 distinction when moving animation styles.
 
 Keep a `<Sequence>` when it provides shared timing for multiple siblings,
-wraps a component that does not handle timing, or supplies dimensions the child
-cannot accept directly. Managed roots also accept `width` and `height` for
-`useVideoConfig()`. Keep `<TransitionSeries.Sequence>` for consecutive layout,
-with or without transitions; direct `from` props do not replace those behaviors.
+overrides dimensions for `useVideoConfig()`, or wraps a component that does not
+handle timing. Keep `<Series.Sequence>` for consecutive layout and
+`<TransitionSeries.Sequence>` for transitions; direct `from` props do not
+replace those behaviors.
 
 ## Give every independently editable item its own JSX node
 
@@ -198,22 +213,20 @@ items come from the same JSX node, they share one source-editing target.
 For every composition registration, clip, scene, layer or sequence that should
 be editable on its own, write a separate JSX node and keep its editable props
 on that node. This applies to `<Composition>`, `<Still>`, built-in media
-components, `<Sequence>`, `<TransitionSeries.Sequence>`
+components, `<Sequence>`, `<Series.Sequence>`, `<TransitionSeries.Sequence>`
 and custom components.
 
 For example, author an editable timeline like this:
 
 ```tsx title="Separate source nodes"
-import { TransitionSeries } from "@remotion/transitions";
-
-<TransitionSeries>
-  <TransitionSeries.Sequence name="Introduction" durationInFrames={90}>
+<Series>
+  <Series.Sequence name="Introduction" durationInFrames={90}>
     <Introduction />
-  </TransitionSeries.Sequence>
-  <TransitionSeries.Sequence name="Demo" durationInFrames={150}>
+  </Series.Sequence>
+  <Series.Sequence name="Demo" durationInFrames={150}>
     <Demo />
-  </TransitionSeries.Sequence>
-</TransitionSeries>
+  </Series.Sequence>
+</Series>
 ```
 
 A `.map()` or another programmatic loop would create multiple runtime items

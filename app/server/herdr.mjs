@@ -7,6 +7,19 @@ import path from "node:path";
 const SOCK = process.env.HERDR_SOCKET_PATH ?? path.join(os.homedir(), ".config/herdr/herdr.sock");
 let seq = 0;
 
+// The browser client selects an agent by its Herdr pane, not its Claude/Codex session ID.
+export function webUrl(paneId) {
+  if (!paneId) return null;
+  let url;
+  try { url = new URL(process.env.HERDR_WEB_URL ?? "http://127.0.0.1:7317/"); }
+  catch { return null; }
+  if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+  url.searchParams.set("machine", "local");
+  url.searchParams.set("pane", paneId);
+  url.searchParams.set("view", "chat");
+  return url.href;
+}
+
 export function herdr(method, params = {}, timeoutMs = 5000) {
   return new Promise((resolve, reject) => {
     const id = `planesight:${++seq}`;

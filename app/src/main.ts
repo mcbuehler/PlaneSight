@@ -1,6 +1,6 @@
 // Plane Sight: a live airport over the coding agents in Herdr.
 // Taxiway = agents that need you, in the tower's order. Gates and stands = idle agents.
-// The grass below = agents in flight. Click a plane to answer, prompt, stop or inspect it.
+// Working agents are hidden until they need attention. Click a waiting plane to inspect it.
 import "./style.css";
 import logoUrl from "../../public/branding/plane-sight-logo.png?url";
 import { PLANE_SIZE, createAirport, screenResolution, type PlaneView, type StripView } from "./AirportScene";
@@ -8,9 +8,14 @@ import { drawRoads } from "./airfield";
 import { H, STATUS_WORD, W, airframe, airline, flightId, groups, layout, name, tone, waited } from "./model";
 import { EDIT_ACTION, decision, flightCard, h, newFlightForm, type BubbleActions } from "./ui";
 import type { Action, Plane, Spot, TowerState } from "./types";
+import { sentPane } from "./herdrEmbed";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const stage = $("stage");
+const viewport = stage.parentElement!;
+const herdrView = $("herdr-view");
+let framedPane: string | null = null;
+let returningToAirport = false;
 
 let state: TowerState = { now: 0, gemini: { enabled: false, lastError: null }, planes: [] };
 let selected: string | null = null; // a session, or "new" for the new-flight form
@@ -69,7 +74,7 @@ function render() {
   $("tower").title = state.ranker?.error ?? state.ranker?.explanation ?? "";
   $("flight").textContent = g.flying.length ? `${g.flying.length} in flight` : "";
   $("overflow").textContent = overflow ? `+${overflow} more waiting` : "";
-  renderBubble(spots);
+  if (herdrView.hidden) renderBubble(spots);
 }
 
 /** The flight strip of a plane in the queue, in the promo's style; the scene draws it. */
@@ -124,6 +129,82 @@ function renderBubble(spots: ReturnType<typeof layout>["spots"]) {
 
 // ---------------------------------------------------------------- actions
 
+function showHerdr(p: Plane) {
+  if (!p.herdrUrl || !p.pane || returningToAirport) return;
+  // Keep the airport and its selection mounted; only the session view changes.
+  selected = p.session;
+  pinned = true;
+  viewport.inert = true;
+  viewport.setAttribute("aria-hidden", "true");
+  herdrView.hidden = false;
+  $("herdr-session").textContent = p.name ?? p.title ?? p.agent;
+  if (framedPane !== p.pane) {
+    const url = new URL(p.herdrUrl);
+    url.searchParams.set("embed_origin", location.origin);
+    const frame = h("iframe", { src: url.href, title: `Herdr: ${p.name ?? p.title ?? p.agent}` });
+    $("herdr-frame-host").replaceChildren(frame);
+    framedPane = p.pane;
+    $("back-to-airport").focus();
+  }
+}
+
+function hideHerdr() {
+  if (herdrView.hidden) return;
+  herdrView.hidden = true;
+  // Unmount the frame so its terminal connection is released on return.
+  $("herdr-frame-host").replaceChildren();
+  framedPane = null;
+  viewport.inert = false;
+  viewport.removeAttribute("aria-hidden");
+  render();
+  document.querySelector<HTMLButtonElement>("[data-open-herdr]")?.focus();
+}
+
+function syncHerdrRoute() {
+  const pane = new URL(location.href).searchParams.get("herdr");
+  if (!pane) { hideHerdr(); return; }
+  const p = state.planes.find((plane) => plane.pane === pane);
+  if (p) showHerdr(p);
+}
+
+function openHerdr(p: Plane) {
+  if (!p.herdrUrl || !p.pane) return;
+  const url = new URL(location.href);
+  url.searchParams.set("herdr", p.pane);
+  history.pushState({ planeSightHerdr: true }, "", url);
+  showHerdr(p);
+}
+
+function returnToAirport() {
+  if (herdrView.hidden || returningToAirport) return;
+  returningToAirport = true;
+  if (history.state?.planeSightHerdr) history.back();
+  else {
+    // A bookmarked session URL might not have an airport history entry.
+    const url = new URL(location.href);
+    url.searchParams.delete("herdr");
+    history.replaceState(null, "", url);
+    hideHerdr();
+    returningToAirport = false;
+  }
+}
+
+$("back-to-airport").addEventListener("click", returnToAirport);
+window.addEventListener("message", (event) => {
+  if (herdrView.hidden) return;
+  const frame = $("herdr-frame-host").querySelector("iframe");
+  if (!frame) return;
+  const pane = sentPane(event, frame);
+  if (!pane) return;
+  const plane = state.planes.find((p) => p.pane === pane);
+  if (plane) { selected = plane.session; pinned = true; }
+  returnToAirport();
+});
+window.addEventListener("popstate", () => {
+  returningToAirport = false;
+  syncHerdrRoute();
+});
+
 async function post(url: string, body?: unknown) {
   const res = await fetch(url, { method: "POST", body: body === undefined ? undefined : JSON.stringify(body) }).catch(() => null);
   if (!res?.ok) console.warn(url, res && (await res.text()));
@@ -174,7 +255,7 @@ const actions: BubbleActions = {
   cancelEdit() { editing = false; render(); },
   skip(p) { void post(`/api/answer/${p.session}`, { choice: "skip", key: p.need!.key }); },
   toggleOutput() { outputOpen = !outputOpen; render(); },
-  focus(p) { void post(`/api/focus/${p.session}`); },
+  openHerdr,
   sendPrompt(p) {
     const box = $<HTMLTextAreaElement>("prompt");
     const text = box?.value.trim();
@@ -202,6 +283,7 @@ const actions: BubbleActions = {
 // ---------------------------------------------------------------- keyboard
 
 document.addEventListener("keydown", (e) => {
+  if (!herdrView.hidden) return;
   const target = e.target as HTMLElement;
   const inField = target.closest?.("input, textarea, select");
   const p: Plane | undefined = state.planes.find((x) => x.session === selected);
@@ -213,7 +295,7 @@ document.addEventListener("keydown", (e) => {
     else if (p && $("prompt")) actions.sendPrompt(p);
     return;
   }
-  if (inField || target.closest?.("button")) return;
+  if (inField || target.closest?.("button, a")) return;
   const { queue } = groups(state, departing);
   if (e.key === "Enter" && p?.need && !p.need.skipped) {
     e.preventDefault();
@@ -245,6 +327,7 @@ const events = new EventSource("/events");
 events.onmessage = (e) => {
   state = JSON.parse(e.data) as TowerState;
   render();
+  syncHerdrRoute();
 };
 
 // Development only: lets browser scripts select planes that are hard to hit while they move.

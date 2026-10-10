@@ -19,29 +19,15 @@ uses illustrative task data; it is not connected to live agent sessions.
 
 ## Development setup
 
-The prototype uses experimental Remotion Studio APIs from a development checkout.
-The published `4.0.534` packages do not yet include the same component wrappers.
-Keep a built Remotion checkout in a sibling directory named `remotion`; all
-package links are relative so no developer-specific home path is required.
-
-From the directory where you keep repositories:
+Use Node.js 22 or newer and npm. All Remotion packages are pinned to the published
+`4.0.534` release; no separate Remotion checkout or package links are needed.
 
 ```sh
-git clone https://github.com/remotion-dev/remotion.git remotion
-cd remotion
-git checkout 32af7e8f8ac67493ef81498d311af3dc9ca953a6
-bun install
-bun run build
-cd ..
 git clone https://github.com/mcbuehler/PlaneSight.git
 cd PlaneSight
 npm ci
 npm run dev
 ```
-
-The Remotion checkout uses Bun (its package manager version is recorded in its
-`package.json`). If you already have that checkout, reuse it instead of cloning
-it again. Keep its built packages available while working on this project.
 
 Studio prints its local URL. Open `/PixelAirport` for the UI prototype or
 `/PlaneSightPromo` for the video.
@@ -74,3 +60,8 @@ npx remotion render src/index.ts PlaneSightPromo out/plane-sight-promo.mp4
 Generated previews and exports in `out/`, the bundle in `build/`, and the restored
 full-size MP4 are ignored by Git. Keep source edits in `src/` and new artwork in
 `public/`.
+
+The webcam source includes the improved audio recording. The promo plays
+normalized audio tracks from `public/audio/`; regenerate them with
+`npm run normalize-audio` (requires FFmpeg). This also removes the replacement
+audio's 2,048-sample delay so the existing cuts and captions remain in sync.

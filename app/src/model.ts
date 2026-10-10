@@ -73,7 +73,7 @@ function assignStands(parked: Plane[]) {
   }
 }
 
-export function layout({ queue, flying, parked }: ReturnType<typeof groups>) {
+export function layout({ queue, parked }: ReturnType<typeof groups>) {
   const spots = new Map<string, Spot>();
   queue.forEach((p, i) => {
     const entry = ENTRIES[i];
@@ -91,12 +91,7 @@ export function layout({ queue, flying, parked }: ReturnType<typeof groups>) {
     const stand = STANDS[standOf.get(p.session) ?? -1];
     if (stand) spots.set(p.session, { x: stand.x, y: stand.y, heading: 0, scale: PARKED_SCALE, kind: "parked", tag: "none" });
   }
-  const cols = Math.min(Math.max(flying.length, 1), 6);
-  flying.forEach((p, i) => {
-    const x = 330 + (i % cols) * (780 / Math.max(cols - 1, 1));
-    const y = 640 + Math.floor(i / cols) * 46 + (i % 2) * 14;
-    spots.set(p.session, { x, y, heading: 70, scale: 0.42, kind: "flying", tag: "none" });
-  });
+  // Working agents still contribute to the in-flight count, but have no visible plane.
   const overflow = Math.max(0, queue.length - ENTRIES.length - BEHIND.length);
   return { spots, overflow };
 }

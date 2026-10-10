@@ -1,13 +1,31 @@
-import { Video } from "@remotion/media";
-import { Interactive, staticFile, useVideoConfig } from "remotion";
+import { Audio, Video } from "@remotion/media";
+import {
+  AbsoluteFill,
+  type InteractiveTransformProps,
+  Interactive,
+  staticFile,
+  useVideoConfig,
+} from "remotion";
 import { BasicCaptions } from "./basic-captions";
 import { PlaneSightLogo } from "./PlaneSightLogo";
+import { EightAgentsIntro } from "./EightAgentsIntro";
 
-const PresenterNarrationContent = () => {
+const PresenterNarrationContent = ({ style }: InteractiveTransformProps) => {
   const { fps } = useVideoConfig();
 
   return (
-    <>
+    <AbsoluteFill style={style}>
+      <Audio
+        name="Normalized narration"
+        src={staticFile("audio/presenter-normalized.wav")}
+        premountFor={fps}
+      />
+      <EightAgentsIntro
+        name="Closing — eight agents waiting"
+        from={75.2 * fps}
+        durationInFrames={8.1 * fps}
+        premountFor={fps}
+      />
       <Interactive.Div
         name="Presenter circle"
         premountFor={fps}
@@ -24,6 +42,7 @@ const PresenterNarrationContent = () => {
         <Video
           name="Webcam footage"
           src={staticFile("webcam1791640657618.mp4")}
+          muted
           premountFor={fps}
           objectFit="cover"
           style={{
@@ -56,7 +75,7 @@ const PresenterNarrationContent = () => {
         name="Speech captions"
         premountFor={fps}
         width={1280}
-        combineTokensWithinMilliseconds={2200}
+        combineTokensWithinMilliseconds={4000}
         style={{
           position: "absolute",
           bottom: 48,
@@ -135,7 +154,7 @@ const PresenterNarrationContent = () => {
             confidence: null,
           },
           {
-            text: " eight",
+            text: " 8",
             startMs: 5880,
             endMs: 6340,
             timestampMs: 6110,
@@ -1279,7 +1298,7 @@ const PresenterNarrationContent = () => {
             pageBreakAfter: true,
           },
           {
-            text: " Eight",
+            text: " 8",
             startMs: 77640,
             endMs: 78040,
             timestampMs: 77840,
@@ -1535,7 +1554,7 @@ const PresenterNarrationContent = () => {
             confidence: null,
           },
           {
-            text: " plain",
+            text: " plane",
             startMs: 90920,
             endMs: 91220,
             timestampMs: 91070,
@@ -1551,7 +1570,7 @@ const PresenterNarrationContent = () => {
           },
         ]}
       />
-    </>
+    </AbsoluteFill>
   );
 };
 
@@ -1560,5 +1579,4 @@ export const PresenterNarration = Interactive.withSchema({
   componentName: "PresenterNarration",
   schema: {},
   wrapInSequence: true,
-  layout: "absolute-fill",
 });

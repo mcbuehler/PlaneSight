@@ -10,6 +10,7 @@ import * as h from "./herdr.mjs";
 import * as gemini from "./gemini.mjs";
 import { sessionInfo } from "./entire.mjs";
 import * as ranker from "./ranker.mjs";
+import { findCollision } from "./collisions.mjs";
 
 const PORT = Number(process.env.PORT ?? 7777);
 const ROOT = new URL("..", import.meta.url).pathname;
@@ -46,13 +47,14 @@ function log(...args) {
 }
 
 function repoOf(cwd) {
-  if (!cwd) return Promise.resolve("unknown");
+  if (!cwd) return Promise.resolve({ name: "unknown", root: null });
   if (repoCache.has(cwd)) return Promise.resolve(repoCache.get(cwd));
   return new Promise((resolve) => {
     execFile("git", ["-C", cwd, "rev-parse", "--path-format=absolute", "--git-common-dir"], (err, out) => {
-      const name = err ? path.basename(cwd) : path.basename(path.dirname(out.trim()));
-      repoCache.set(cwd, name);
-      resolve(name);
+      const root = err ? path.resolve(cwd) : out.trim();
+      const repo = { name: err ? path.basename(cwd) : path.basename(path.dirname(root)), root };
+      repoCache.set(cwd, repo);
+      resolve(repo);
     });
   });
 }
@@ -68,18 +70,7 @@ function needOf(u) {
   return null;
 }
 
-// Another live session in the same repository already edited the file this request wants to write.
-function collisionOf(u) {
-  const req = u.held ?? (u.status === "blocked" ? u.screenRequest : null);
-  const file = req?.input?.file_path ?? req?.input?.path;
-  if (!file || !/^(Write|Edit|Update|MultiEdit|NotebookEdit)$/.test(req.tool ?? "")) return null;
-  const target = rel(u, file);
-  for (const o of units.values()) {
-    if (o === u || o.repo !== u.repo || o.status === "gone") continue;
-    if (o.files.has(target)) return { file: target, other: o.name ?? o.title ?? o.sessionId.slice(0, 8), otherSession: o.sessionId };
-  }
-  return null;
-}
+const collisionOf = (u) => findCollision(u, units);
 
 // ---------------------------------------------------------------- hooks
 
@@ -113,10 +104,15 @@ async function onHook(req, res, agent, kind) {
   try { ev = JSON.parse(await readBody(req)); } catch { return res.end(agent === "codex" ? "{}" : ""); }
   const name = ev.hook_event_name ?? "";
   if (!ev.session_id) return res.end(agent === "codex" ? "{}" : "");
+  if (ONLY.length && !ONLY.some((p) => ev.cwd?.startsWith(p))) return res.end(agent === "codex" ? "{}" : "");
   const u = unit(ev.session_id);
   u.agent = agent;
   u.paneId ??= req.headers["x-herdr-pane"] ?? null;
-  if (ev.cwd && !u.cwd) { u.cwd = ev.cwd; u.repo = await repoOf(ev.cwd); }
+  if (ev.cwd && !u.cwd) {
+    u.cwd = ev.cwd;
+    const repo = await repoOf(ev.cwd);
+    u.repo = repo.name; u.repoRoot = repo.root;
+  }
   if (ev.transcript_path) u.transcriptPath = ev.transcript_path;
 
   if (name === "UserPromptSubmit") { u.lastPrompt = ev.prompt ?? u.lastPrompt; u.landed = null; }
@@ -179,7 +175,8 @@ async function poll() {
     u.title = a.terminal_title_stripped || u.title;
     if (!u.cwd) {
       u.cwd = cwd;
-      u.repo = await repoOf(cwd);
+      const repo = await repoOf(cwd);
+      u.repo = repo.name; u.repoRoot = repo.root;
       // Seed edited files from Entire so a server restart keeps collision data.
       if (a.agent_session?.value) {
         sessionInfo(u.sessionId, cwd).then((info) => {
@@ -377,7 +374,7 @@ function snapshot() {
     const need = needOf(u);
     const card = need ? cards.get(need.key) : null;
     return {
-      session: u.sessionId, pane: u.paneId, agent: u.agent, name: u.name, title: u.title, repo: u.repo, status: u.status,
+      session: u.sessionId, pane: u.paneId, herdrUrl: h.webUrl(u.paneId), agent: u.agent, name: u.name, title: u.title, repo: u.repo, status: u.status,
       tokens: u.tokens, files: [...u.files],
       need: need && { ...need, skipped: u.skipped.has(need.key), since: u.held?.since ?? u.blockedAt ?? u.landed?.at,
         rank: order.get(need.key) ?? null, reason: ranking.find((r) => r.key === need.key)?.reason ?? null,

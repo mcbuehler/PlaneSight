@@ -1,31 +1,49 @@
-import { CanvasImage, Interactive, staticFile, useVideoConfig } from "remotion";
+import {
+  AbsoluteFill,
+  type InteractiveTransformProps,
+  CanvasImage,
+  Interactive,
+  staticFile,
+  useVideoConfig,
+} from "remotion";
 
 export type AircraftAirframe = "narrowbody" | "widebody";
 
-type PlaneProps = {
+type PlaneProps = InteractiveTransformProps & {
+  width?: number;
+  height?: number;
   airframe?: AircraftAirframe;
 };
 
-const CloudCodePlaneContent = ({ airframe = "narrowbody" }: PlaneProps) => {
+const CloudCodePlaneContent = ({
+  airframe = "narrowbody",
+  width,
+  height,
+  style,
+}: PlaneProps) => {
   const { fps } = useVideoConfig();
 
   return (
-    <CanvasImage
-      name="Cloud Code plane"
-      src={staticFile(
-        airframe === "widebody"
-          ? "airlines/cloud-code-widebody-orange.png"
-          : "airlines/cloud-code-narrowbody-orange.png",
-      )}
-      premountFor={fps}
-      style={{
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        objectFit: "contain",
-        imageRendering: "pixelated",
-      }}
-    />
+    <AbsoluteFill
+      style={{ width: width ?? "100%", height: height ?? "100%", ...style }}
+    >
+      <CanvasImage
+        name="Cloud Code plane"
+        src={staticFile(
+          airframe === "widebody"
+            ? "airlines/cloud-code-widebody-orange.png"
+            : "airlines/cloud-code-narrowbody-orange.png",
+        )}
+        premountFor={fps}
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          imageRendering: "pixelated",
+        }}
+      />
+    </AbsoluteFill>
   );
 };
 
@@ -41,29 +59,37 @@ export const CloudCodePlane = Interactive.withSchema({
     },
   },
   wrapInSequence: true,
-  layout: "absolute-fill",
 });
 
-const OpenAirPlaneContent = ({ airframe = "narrowbody" }: PlaneProps) => {
+const OpenAirPlaneContent = ({
+  airframe = "narrowbody",
+  width,
+  height,
+  style,
+}: PlaneProps) => {
   const { fps } = useVideoConfig();
 
   return (
-    <CanvasImage
-      name="OpenAir plane"
-      src={staticFile(
-        airframe === "widebody"
-          ? "airlines/openair-widebody.png"
-          : "airlines/openair-plane-top-down.png",
-      )}
-      premountFor={fps}
-      style={{
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        objectFit: "contain",
-        imageRendering: "pixelated",
-      }}
-    />
+    <AbsoluteFill
+      style={{ width: width ?? "100%", height: height ?? "100%", ...style }}
+    >
+      <CanvasImage
+        name="OpenAir plane"
+        src={staticFile(
+          airframe === "widebody"
+            ? "airlines/openair-widebody.png"
+            : "airlines/openair-plane-top-down.png",
+        )}
+        premountFor={fps}
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          imageRendering: "pixelated",
+        }}
+      />
+    </AbsoluteFill>
   );
 };
 
@@ -79,7 +105,6 @@ export const OpenAirPlane = Interactive.withSchema({
     },
   },
   wrapInSequence: true,
-  layout: "absolute-fill",
 });
 
 export const PixelAirlines = () => {

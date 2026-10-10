@@ -1,11 +1,18 @@
-import { Interactive, useVideoConfig } from "remotion";
+import {
+  AbsoluteFill,
+  Interactive,
+  useVideoConfig,
+  type InteractiveTransformProps,
+} from "remotion";
 import {
   CloudCodePlane,
   OpenAirPlane,
   type AircraftAirframe,
 } from "./PixelAirlines";
 
-type AirportAircraftProps = {
+type AirportAircraftProps = InteractiveTransformProps & {
+  width?: number;
+  height?: number;
   airline: "Cloud Code" | "OpenAir";
   airframe: AircraftAirframe;
   heading: number;
@@ -23,6 +30,9 @@ const AirportAircraftContent = ({
   status,
   priority,
   altitude,
+  width,
+  height,
+  style,
 }: AirportAircraftProps) => {
   const { fps } = useVideoConfig();
 
@@ -31,7 +41,9 @@ const AirportAircraftContent = ({
   }
 
   return (
-    <>
+    <AbsoluteFill
+      style={{ width: width ?? "100%", height: height ?? "100%", ...style }}
+    >
       <Interactive.Div
         name="Aircraft shadow"
         style={{
@@ -138,7 +150,7 @@ const AirportAircraftContent = ({
           {status}
         </div>
       </Interactive.Div>
-    </>
+    </AbsoluteFill>
   );
 };
 
@@ -171,7 +183,7 @@ export const AirportAircraft = Interactive.withSchema({
       variants: { above: {}, below: {}, left: {} },
     },
     status: {
-      type: "string",
+      type: "text-content",
       default: "Build failed · urgent",
       description: "Task status",
     },
@@ -190,5 +202,4 @@ export const AirportAircraft = Interactive.withSchema({
     },
   },
   wrapInSequence: true,
-  layout: "absolute-fill",
 });
