@@ -1,4 +1,4 @@
-/* Plane Sight. The flight strips follow the promo's AirportAircraft tooltip:
+/* Plane Sight. The bubble shares the flight strips' style (drawn in AirportScene.ts):
    cream paper, a thick left edge, Courier type, the airline's colour, amber for the next plane. */
 :root {
   --grass: #6c9c57;
@@ -48,72 +48,6 @@ body { background: var(--grass); color: var(--ink); font: 18px/1.45 var(--sans);
 .flight-label { right: 22px; bottom: 18px; font-size: 17px; }
 .overflow-label { left: 16px; top: 586px; }
 .logo { left: 14px; bottom: 10px; width: 170px; }
-
-/* ---------------------------------------------------------------- flight tags */
-
-#tags { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-.tag {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 0;
-  height: 0;
-  transition: opacity 200ms;
-}
-.tag > * { pointer-events: none; }
-.tag {
-  --strip-bg: var(--paper);
-  --strip-edge: var(--edge);
-  --airline: var(--cloud-code);
-}
-.tag.openair { --airline: var(--openair); }
-.tag.is-next { --strip-bg: var(--paper-next); --strip-edge: var(--edge-next); }
-
-.tag-line, .tag-status {
-  position: absolute;
-  left: -90px;
-  width: 180px;
-  background: var(--strip-bg);
-  border: 2px solid var(--strip-edge);
-  border-left-width: 6px;
-  padding: 0 10px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.tag-line {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding-top: 7px;
-  padding-bottom: 3px;
-  border-bottom: 0;
-  color: var(--airline);
-  font: 700 15px/1 var(--mono);
-  letter-spacing: -0.4px;
-}
-.tag-line b { color: var(--ink-soft); font-size: 13px; }
-.tag-line strong { overflow: hidden; text-overflow: ellipsis; }
-.tag-line small { margin-left: auto; font-size: 11px; color: #66736b; letter-spacing: 0; }
-.tag-status {
-  display: block;
-  padding-top: 3px;
-  padding-bottom: 7px;
-  border-top: 0;
-  color: var(--ink-soft);
-  font: 400 11px/1.1 var(--mono);
-  box-shadow: 3px 3px 0 #334d4133;
-}
-.tag.is-next .tag-status { color: #86591c; }
-.tag.tone-alert .tag-status { color: #a5630a; font-weight: 700; }
-/* above: the strip sits over the plane at the hold line; below: under a plane on the taxiway */
-/* left: beside a plane at a hold mark; above / below: over or under a plane on a taxiway */
-.tag.is-left .tag-line { left: -232px; top: -30px; }
-.tag.is-left .tag-status { left: -232px; top: -6px; }
-.tag.is-above .tag-line { top: -88px; }
-.tag.is-above .tag-status { top: -64px; }
-.tag.is-below .tag-line { top: 38px; }
-.tag.is-below .tag-status { top: 62px; }
-.tag.is-selected .tag-line, .tag.is-selected .tag-status { border-color: #fff; }
 
 /* ---------------------------------------------------------------- bubble */
 
@@ -229,8 +163,4 @@ button kbd { font: inherit; opacity: .7; margin-left: 6px; }
   .herdr-bar { padding: 10px; gap: 14px; }
   .herdr-heading { flex-direction: column; gap: 0; font-size: 12px; }
   .herdr-heading span { max-width: 35vw; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tag { transition: none; }
 }

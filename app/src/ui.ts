@@ -1,6 +1,6 @@
-// The HTML layer over the airport: flight tags that follow the planes, and the bubble.
+// The HTML layer over the airport: the bubble. The flight strips are drawn in AirportScene.ts.
 import { AIRLINE_NAME, STATUS_WORD, airline, flightId, name, short, tone, waited } from "./model";
-import type { Action, Need, Plane, Spot } from "./types";
+import type { Action, Need, Plane } from "./types";
 
 type Child = Node | string | null | undefined | false | Child[];
 
@@ -13,46 +13,6 @@ export function h(tag: string, attrs: Record<string, unknown> = {}, ...children:
   const flat = (c: Child): (Node | string)[] => (Array.isArray(c) ? c.flatMap(flat) : c ? [c] : []);
   e.append(...children.flatMap(flat));
   return e;
-}
-
-// ---------------------------------------------------------------- flight tags
-
-const tags = new Map<string, HTMLElement>();
-
-/** One strip per plane in the queue, in the promo's flight-strip style. */
-export function renderTags(host: HTMLElement, planes: Plane[], spots: Map<string, Spot>, selected: string | null) {
-  const seen = new Set<string>();
-  for (const p of planes) {
-    const spot = spots.get(p.session);
-    if (!spot || spot.tag === "none") continue;
-    seen.add(p.session);
-    let tag = tags.get(p.session);
-    if (!tag) {
-      tag = h("div", { class: "tag" });
-      tags.set(p.session, tag);
-      host.append(tag);
-    }
-    const status = p.need?.collision ? `Collides with ${p.need.collision.other}` : STATUS_WORD[tone(p)];
-    tag.className = `tag ${airline(p)} tone-${tone(p)} is-${spot.tag}${spot.rank === 0 ? " is-next" : ""}${p.session === selected ? " is-selected" : ""}`;
-    tag.replaceChildren(
-      h("span", { class: "tag-line" }, h("b", {}, `${(spot.rank ?? 0) + 1}`), h("strong", {}, short(name(p), 14)), h("small", {}, flightId(p))),
-      h("span", { class: "tag-status" }, status),
-    );
-  }
-  for (const [session, tag] of tags) {
-    if (seen.has(session)) continue;
-    tag.remove();
-    tags.delete(session);
-  }
-}
-
-export function positionTags(positions: Map<string, { x: number; y: number; visible: boolean }>) {
-  for (const [session, tag] of tags) {
-    const at = positions.get(session);
-    if (!at) continue;
-    tag.style.transform = `translate(${at.x}px, ${at.y}px)`;
-    tag.style.opacity = at.visible ? "1" : "0";
-  }
 }
 
 // ---------------------------------------------------------------- bubble

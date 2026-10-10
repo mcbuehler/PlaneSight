@@ -33,7 +33,7 @@ Rebuild the Herdr client after applying the patch. Plane Sight passes `embed_ori
 - **Hold lines:** the first three agents that need you wait at the three connectors, #1 on the right. More wait behind them on the taxiway.
 - **Outline colour:** red needs approval, blue needs a decision, green is ready for review, yellow is a collision.
 - **Airline:** Cloud Code planes are Claude Code agents, OpenAir planes are Codex agents.
-- **Gates and stands:** idle agents. **Grass below:** agents in flight, circling.
+- **Stands at the concourse:** idle agents. Each keeps its stand; it pushes back before it taxis out. **Grass below:** agents in flight, circling.
 - **Click a plane** to answer it, send it a prompt, stop it, read its terminal output or open it in Herdr.
 - **Click the terminal**, or press N, to start a new agent in its own worktree.
 
@@ -48,6 +48,6 @@ Rebuild the Herdr client after applying the patch. Plane Sight passes `embed_ori
 
 ## Layout
 
-- `src/` is the client: `main.ts` (data and keys), `AirportScene.ts` (Phaser), `ui.ts` (flight strips and bubble), `model.ts` (where each agent stands).
+- `src/` is the client: `main.ts` (data and keys), `AirportScene.ts` (Phaser: planes, flight strips, taxi routes), `ui.ts` (the bubble), `model.ts` (where each agent stands).
 - `server/` is the backend: hooks, the Herdr socket, Gemini cards and ranking, Entire session data.
 - `hooks/` holds the Claude Code and Codex hook settings. `scripts/launch-demo.sh` starts a demo fleet.

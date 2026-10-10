@@ -3,11 +3,11 @@
 // The grass below = agents in flight. Click a plane to answer, prompt, stop or inspect it.
 import "./style.css";
 import logoUrl from "../../public/branding/plane-sight-logo.png?url";
-import { PLANE_SIZE, createAirport, screenResolution, type PlaneView } from "./AirportScene";
+import { PLANE_SIZE, createAirport, screenResolution, type PlaneView, type StripView } from "./AirportScene";
 import { drawRoads } from "./airfield";
-import { H, W, airframe, airline, groups, layout, tone, waited } from "./model";
-import { EDIT_ACTION, decision, flightCard, h, newFlightForm, positionTags, renderTags, type BubbleActions } from "./ui";
-import type { Action, Plane, TowerState } from "./types";
+import { H, STATUS_WORD, W, airframe, airline, flightId, groups, layout, name, tone, waited } from "./model";
+import { EDIT_ACTION, decision, flightCard, h, newFlightForm, type BubbleActions } from "./ui";
+import type { Action, Plane, Spot, TowerState } from "./types";
 import { sentPane } from "./herdrEmbed";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -38,7 +38,6 @@ const airport = createAirport($("game"), {
     if (x > 20 && x < 160 && y > 10 && y < 120) select("new");
     else { selected = null; pinned = true; editing = false; render(); }
   },
-  onFrame: (positions) => positionTags(positions),
 }, roads);
 
 function fit() {
@@ -64,9 +63,11 @@ function render() {
 
   const views: PlaneView[] = state.planes
     .filter((p) => spots.has(p.session) && !departing.has(p.session))
-    .map((p) => ({ session: p.session, airline: airline(p), airframe: airframe(p), tone: tone(p), spot: spots.get(p.session)! }));
+    .map((p) => {
+      const spot = spots.get(p.session)!;
+      return { session: p.session, airline: airline(p), airframe: airframe(p), tone: tone(p), spot, strip: strip(p, spot) };
+    });
   airport.scene.apply(views, selected === "new" ? null : selected);
-  renderTags($("tags"), state.planes.filter((p) => !departing.has(p.session)), spots, selected);
 
   const team = state.ranker?.source.startsWith("team");
   $("tower").textContent = team ? "Tower: team ranker" : state.gemini.enabled ? "Gemini 3.8 Flash" : "Simple rules";
@@ -74,6 +75,20 @@ function render() {
   $("flight").textContent = g.flying.length ? `${g.flying.length} in flight` : "";
   $("overflow").textContent = overflow ? `+${overflow} more waiting` : "";
   if (herdrView.hidden) renderBubble(spots);
+}
+
+/** The flight strip of a plane in the queue, in the promo's style; the scene draws it. */
+function strip(p: Plane, spot: Spot): StripView | null {
+  if (spot.tag === "none") return null;
+  return {
+    rank: (spot.rank ?? 0) + 1,
+    name: name(p),
+    flight: flightId(p),
+    status: p.need?.collision ? `Collides with ${p.need.collision.other}` : STATUS_WORD[tone(p)],
+    next: spot.rank === 0,
+    alert: tone(p) === "alert",
+    selected: p.session === selected,
+  };
 }
 
 function renderBubble(spots: ReturnType<typeof layout>["spots"]) {
@@ -316,4 +331,4 @@ events.onmessage = (e) => {
 };
 
 // Development only: lets browser scripts select planes that are hard to hit while they move.
-if (import.meta.env.DEV) Object.assign(window, { planesight: { select, state: () => state, debug: () => ({ selected, pinned, grounds }) } });
+if (import.meta.env.DEV) Object.assign(window, { planesight: { select, state: () => state, debug: () => ({ selected, pinned, grounds }), position: (s: string) => airport.scene.positionOf(s) } });
