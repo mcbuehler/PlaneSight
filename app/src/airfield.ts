@@ -20,6 +20,7 @@ export interface Entry {
   heading: number;
 }
 
+// Each north entry meets its south partner at one point on the runway centerline.
 // The order is the order of the queue: #1 waits at the first entry, #2 at the second, and so on.
 export const ENTRIES: Entry[] = [
   { id: "nw", taxiY: NORTH_Y, startX: 250, d: "M 250 210 Q 262 210 271 219 L 414 362 Q 432 380 458 380", hold: { x: 363, y: 311 }, heading: 135 },
@@ -27,7 +28,7 @@ export const ENTRIES: Entry[] = [
   { id: "nc", taxiY: NORTH_Y, startX: 590, d: "M 590 210 Q 602 210 611 219 L 754 362 Q 772 380 798 380", hold: { x: 703, y: 311 }, heading: 135 },
   { id: "sc", taxiY: SOUTH_Y, startX: 590, d: "M 590 550 Q 602 550 611 541 L 754 398 Q 772 380 798 380", hold: { x: 703, y: 449 }, heading: 45 },
   { id: "ne", taxiY: NORTH_Y, startX: 1060, d: "M 1060 210 Q 1072 210 1081 229 L 1160 360 Q 1167 380 1178 380", hold: { x: 1127, y: 306 }, heading: 149 },
-  { id: "se", taxiY: SOUTH_Y, startX: 950, d: "M 950 550 Q 962 550 971 541 L 1114 398 Q 1132 380 1158 380", hold: { x: 1063, y: 449 }, heading: 45 },
+  { id: "se", taxiY: SOUTH_Y, startX: 970, d: "M 970 550 Q 982 550 991 541 L 1134 398 Q 1152 380 1178 380", hold: { x: 1083, y: 449 }, heading: 45 },
 ];
 
 /** Taxiway places behind the entries, for agents beyond the sixth. Each belongs to one entry. */
@@ -98,18 +99,26 @@ ${STANDS.map(({ x }) => `<rect x="${x - 26}" y="49" width="52" height="8" fill="
 ${STANDS.map(({ x }) => `<rect x="${x - 15}" y="62" width="8" height="22" fill="#4a525a"/><rect x="${x - 14}" y="62" width="6" height="21" fill="#aeb3ba"/>
 <rect x="${x - 17}" y="82" width="12" height="8" fill="#4a525a"/><rect x="${x - 16}" y="83" width="10" height="6" fill="#c9cdd2"/>`).join("")}`;
 
+/** The hold bar of an entry: across the road at its hold mark. pathLength makes every bar five whole dashes. */
+const HOLD_BARS = ENTRIES.map(({ hold, heading }) => {
+  const a = (heading * Math.PI) / 180;
+  const dx = Math.cos(a) * 18, dy = Math.sin(a) * 18;
+  return `<path d="M ${(hold.x - dx).toFixed(1)} ${(hold.y - dy).toFixed(1)} L ${(hold.x + dx).toFixed(1)} ${(hold.y + dy).toFixed(1)}" pathLength="32" fill="none" stroke="#f2cc69" stroke-width="6" stroke-dasharray="4 3"/>`;
+}).join("");
+
+// The runway centerline ends on a whole dash: 105 + 18 × (29 + 27) + 29 = 1142.
 const SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" shape-rendering="crispEdges">
 <path d="${ROADS}" fill="none" stroke="#3c5146" stroke-width="58" stroke-linejoin="round"/>
 ${APRON}
 <path d="${ROADS}" fill="none" stroke="#68766e" stroke-width="48" stroke-linejoin="round"/>
 <path d="M 20 336 H 1260 V 424 H 20 Z" fill="#37434a" stroke="#263b35" stroke-width="6"/>
 <path d="M 24 342 H 1256 M 24 418 H 1256" fill="none" stroke="#8c9992" stroke-width="2"/>
-<path d="M 105 380 H 1175" fill="none" stroke="#f2f0df" stroke-width="5" stroke-dasharray="29 27"/>
+<path d="M 105 380 H 1142" fill="none" stroke="#f2f0df" stroke-width="5" stroke-dasharray="29 27"/>
 <path d="M 34 346 V 414 M 48 346 V 414 M 62 346 V 414 M 76 346 V 414 M 1204 346 V 414 M 1218 346 V 414 M 1232 346 V 414 M 1246 346 V 414" fill="none" stroke="#f2f0df" stroke-width="7"/>
 <path d="${ROADS}" fill="none" stroke="#e8c466" stroke-width="2"/>
 ${STAND_MARKS}
 ${CONCOURSE}
-<path d="M 350 324 L 376 298 M 690 324 L 716 298 M 1110 319 L 1144 299 M 350 436 L 376 462 M 690 436 L 716 462 M 1050 436 L 1076 462" fill="none" stroke="#f2cc69" stroke-width="6" stroke-dasharray="4 3"/>
+${HOLD_BARS}
 </svg>`;
 
 /** The roads as a canvas, drawn at twice the grid size so they stay sharp on large screens. */
