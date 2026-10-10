@@ -1,0 +1,1 @@
+i basically want an interactive airport in the web that uses the connection to herdr for the agent management kind of how herdr-webui does it
