@@ -377,7 +377,7 @@ function snapshot() {
     const need = needOf(u);
     const card = need ? cards.get(need.key) : null;
     return {
-      session: u.sessionId, pane: u.paneId, agent: u.agent, name: u.name, title: u.title, repo: u.repo, status: u.status,
+      session: u.sessionId, pane: u.paneId, herdrUrl: h.webUrl(u.paneId), agent: u.agent, name: u.name, title: u.title, repo: u.repo, status: u.status,
       tokens: u.tokens, files: [...u.files],
       need: need && { ...need, skipped: u.skipped.has(need.key), since: u.held?.since ?? u.blockedAt ?? u.landed?.at,
         rank: order.get(need.key) ?? null, reason: ranking.find((r) => r.key === need.key)?.reason ?? null,

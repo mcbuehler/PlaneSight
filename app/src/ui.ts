@@ -64,7 +64,7 @@ export interface BubbleActions {
   cancelEdit: () => void;
   skip: (p: Plane) => void;
   toggleOutput: () => void;
-  focus: (p: Plane) => void;
+  openHerdr: (p: Plane) => void;
   sendPrompt: (p: Plane) => void;
   stop: (p: Plane) => void;
   launch: () => void;
@@ -98,7 +98,7 @@ function wants(n: Need) {
 function secondary(p: Plane, a: BubbleActions, outputOpen: boolean) {
   return h("span", { class: "secondary" },
     h("button", { class: "small", onclick: () => a.toggleOutput() }, outputOpen ? "Hide output" : "Output"),
-    h("button", { class: "small", onclick: () => a.focus(p) }, "Herdr"));
+    p.herdrUrl && h("button", { class: "small", "data-open-herdr": "", title: "Open this session in Herdr", onclick: () => a.openHerdr(p) }, "Herdr"));
 }
 
 function output(p: Plane) {
