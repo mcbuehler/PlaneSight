@@ -7,6 +7,9 @@ import { PixelAirport } from "./PixelAirport";
 import { AirportAircraft } from "./AirportAircraft";
 import { AirportControlPanel } from "./AirportControlPanel";
 import { AirportLayout } from "./AirportLayout";
+import { EightAgentsIntro } from "./EightAgentsIntro";
+import { PresenterNarration } from "./PresenterNarration";
+import { FlightCrewScene } from "./FlightCrewScene";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -14,7 +17,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="PlaneSightPromo"
         component={PlaneSightPromo}
-        durationInFrames={2655}
+        durationInFrames={2931}
         fps={30}
         width={1280}
         height={720}
@@ -23,6 +26,30 @@ export const RemotionRoot: React.FC = () => {
         id="PlaneSightLogo"
         component={PlaneSightLogo}
         durationInFrames={120}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="EightAgentsIntro"
+        component={EightAgentsIntro}
+        durationInFrames={243}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="PresenterNarration"
+        component={PresenterNarration}
+        durationInFrames={2755}
+        fps={30}
+        width={1280}
+        height={720}
+      />
+      <Composition
+        id="FlightCrewScene"
+        component={FlightCrewScene}
+        durationInFrames={297}
         fps={30}
         width={1280}
         height={720}
