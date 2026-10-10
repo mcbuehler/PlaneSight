@@ -68,5 +68,9 @@ export interface Spot {
   rank?: number;
   /** For a plane in the queue: the entry it takes onto the runway (see airfield.ts). */
   entry?: string;
+  /** Only the first-priority plane occupies the runway. */
+  runway?: boolean;
+  /** The plane immediately ahead in departure order. */
+  follows?: string;
   tag: "left" | "above" | "below" | "none";
 }

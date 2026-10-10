@@ -11,10 +11,27 @@
   <button id="switch-view" type="button" aria-controls="herdr-view">Herdr →</button>
   <div class="view-heading"><strong id="view-title">Plane Sight</strong><span id="view-session"></span></div>
 </header>
+<div class="airport-banner" id="airport-banner">
+  <img id="airport-sign" alt="Agent Airport International — AAI" width="1968" height="799">
+</div>
 <div class="viewport">
   <main class="stage" id="stage" aria-label="Airport">
     <div id="game"></div>
-    <p class="tower-label" id="tower" role="status"></p>
+    <div class="tower-control" id="tower">
+      <button class="tower-trigger" id="tower-toggle" type="button" aria-label="About the tower: Gemini 3.8 Flash" aria-expanded="false" aria-controls="tower-info">
+        <img class="tower-sparkle" src="/src/assets/gemini-pixel.svg" alt="" width="36" height="36">
+        <span class="tower-twinkle" aria-hidden="true">+</span>
+        <span class="tower-caption">Tower</span>
+      </button>
+      <div class="tower-card" id="tower-info" hidden>
+        <div class="tower-brand">
+          <img src="/src/assets/gemini-pixel.svg" alt="" width="28" height="28">
+          <strong>Gemini 3.8 Flash</strong>
+        </div>
+        <p>Your air traffic controller</p>
+        <small class="tower-status" id="tower-status" role="status"></small>
+      </div>
+    </div>
     <p class="overflow-label" id="overflow"></p>
     <p class="flight-label" id="flight"></p>
     <img class="logo" id="logo" alt="Plane Sight">

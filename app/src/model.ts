@@ -1,5 +1,5 @@
 // Turns the server's agents into planes on the airfield: who needs you, who is parked, who is flying.
-import { BEHIND, ENTRIES, H, NORTH_Y, PARKED_SCALE, STANDS, W } from "./airfield";
+import { ENTRIES, H, NORTH_Y, PARKED_SCALE, RUNWAY_Y, STANDS, W, type Entry } from "./airfieldLayout";
 import type { Airframe, Airline, Plane, Spot, Tone, TowerState } from "./types";
 
 export { H, W };
@@ -11,7 +11,7 @@ export function tone(p: Plane): Tone {
   const n = p.need;
   if (!n || n.skipped) return p.status === "working" ? "flying" : "parked";
   const c = n.card?.category;
-  if (n.collision || c === "collision" || c === "error") return "alert";
+  if (c === "error") return "alert";
   if (n.kind === "landed" || c === "review") return "review";
   if (n.kind === "question" || c === "design_decision" || c === "clarification") return "decide";
   return "approve";
@@ -21,7 +21,7 @@ export const STATUS_WORD: Record<Tone, string> = {
   approve: "Needs approval",
   decide: "Needs a decision",
   review: "Ready for review",
-  alert: "Collision",
+  alert: "Needs attention",
   parked: "At the stand",
   flying: "In flight",
 };
@@ -50,6 +50,22 @@ export function groups(state: TowerState, departing: Set<string>) {
   return { queue, flying, parked };
 }
 
+/** Follow the angled entry back to its taxiway, then leave room for readable labels. */
+function linePosition(entry: Entry, index: number) {
+  // Keep the next plane's nose behind the hold mark, including larger airframes.
+  const distance = 30 + (index === 0 ? 0 : 126 + (index - 1) * 208);
+  const radians = entry.heading * Math.PI / 180;
+  const diagonal = Math.abs((entry.hold.y - entry.taxiY) / Math.cos(radians));
+  const onEntry = distance < diagonal;
+  const alongEntry = Math.min(distance, diagonal);
+  return {
+    x: entry.hold.x - Math.sin(radians) * alongEntry - Math.max(0, distance - diagonal),
+    y: onEntry ? entry.hold.y + Math.cos(radians) * alongEntry : entry.taxiY,
+    heading: onEntry ? entry.heading : 90,
+    tag: onEntry ? "left" as const : entry.taxiY === NORTH_Y ? "above" as const : "below" as const,
+  };
+}
+
 // Each idle agent keeps its stand while it stays parked, so the others never shuffle along.
 const standOf = new Map<string, number>();
 
@@ -68,23 +84,24 @@ function assignStands(parked: Plane[]) {
 
 export function layout({ queue, parked }: ReturnType<typeof groups>) {
   const spots = new Map<string, Spot>();
-  queue.forEach((p, i) => {
-    const entry = ENTRIES[i];
-    if (entry) {
-      spots.set(p.session, { x: entry.hold.x, y: entry.hold.y, heading: entry.heading, scale: 1, kind: "queue", rank: i, entry: entry.id, tag: "left" });
-      return;
-    }
-    const slot = BEHIND[i - ENTRIES.length];
-    if (!slot) return;
-    const taxiY = ENTRIES.find((e) => e.id === slot.entry)!.taxiY;
-    spots.set(p.session, { x: slot.x, y: taxiY, heading: 90, scale: 1, kind: "queue", rank: i, entry: slot.entry, tag: taxiY === NORTH_Y ? "above" : "below" });
+  const entry = ENTRIES.find((candidate) => candidate.id === "nc")!;
+  // One departure line makes priority unambiguous: only #1 occupies the runway.
+  queue.forEach((p, index) => {
+    const position = index === 0
+      ? { x: 890, y: RUNWAY_Y, heading: 90, tag: "above" as const }
+      : linePosition(entry, index - 1);
+    if (position.x < 100) return;
+    spots.set(p.session, {
+      ...position, scale: 1, kind: "queue", rank: index, entry: entry.id,
+      runway: index === 0, follows: index > 0 ? queue[index - 1].session : undefined,
+    });
   });
+  const overflow = queue.length - spots.size;
   assignStands(parked);
   for (const p of parked) {
     const stand = STANDS[standOf.get(p.session) ?? -1];
     if (stand) spots.set(p.session, { x: stand.x, y: stand.y, heading: 0, scale: PARKED_SCALE, kind: "parked", tag: "none" });
   }
   // Working agents still contribute to the in-flight count, but have no visible plane.
-  const overflow = Math.max(0, queue.length - ENTRIES.length - BEHIND.length);
   return { spots, overflow };
 }

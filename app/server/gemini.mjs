@@ -7,7 +7,7 @@ const RANK_MODEL = process.env.PLANESIGHT_RANK_MODEL ?? MODEL;
 const client = process.env.GEMINI_API_KEY ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }) : null;
 
 export const geminiEnabled = () => client !== null;
-export const status = { lastError: null, calls: 0 };
+export const status = { lastError: null, rankError: null, calls: 0 };
 
 async function json(model, system, input, schema) {
   status.calls++;
@@ -121,6 +121,7 @@ a kind of item or a repository, rank it lower; if they act on something fast, ra
 Return every key exactly once.`;
 
 export async function rank(items, decisions) {
+  status.rankError = null;
   const fallback = fallbackRank(items);
   if (!client || items.length < 2) return fallback;
   try {
@@ -131,7 +132,7 @@ export async function rank(items, decisions) {
     // Anything Gemini dropped goes to the end in fallback order.
     return [...ranked, ...fallback.filter((f) => !seen.has(f.key))];
   } catch (e) {
-    status.lastError = `rank: ${e.message}`;
+    status.rankError = status.lastError = `rank: ${e.message}`;
     return fallback;
   }
 }

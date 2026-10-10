@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
+  <defs>
+    <clipPath id="sparkle">
+      <path d="M14 1h4v6h2v4h4v2h6v4h-6v2h-4v4h-2v6h-4v-6h-2v-4H8v-2H2v-4h6v-2h4V7h2z"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#sparkle)">
+    <path fill="#6d9cfa" d="M0 0h32v32H0z"/>
+    <path fill="#8b7aeb" d="M12 0h20v32H12z"/>
+    <path fill="#ba83e1" d="M20 0h12v32H20z"/>
+    <path fill="#e4a0db" d="M26 0h6v32h-6z"/>
+    <path fill="#acc8ff" d="M0 0h12v12H0z"/>
+  </g>
+</svg>

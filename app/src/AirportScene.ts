@@ -1,5 +1,5 @@
 // The airfield in Phaser: terrain, roads, planes, their motion and the takeoff.
-// main.ts owns the data; the HTML layer (ui.ts) draws only the bubble on top.
+// main.ts owns the data and opens Herdr when a plane or its label is clicked.
 import Phaser from "phaser";
 import terrainUrl from "./assets/airport-terrain-v2.png?url";
 import ccNarrowUrl from "./assets/cloud-code-narrowbody-orange.png?url";
@@ -331,12 +331,28 @@ export class AirportScene extends Phaser.Scene {
   /** The route to a spot: along the plane's taxiway and down its entry when it can, else straight there. */
   private route(plane: PlaneObject, spot: Spot) {
     const entry = entryById(spot.entry);
-    const onItsTaxiway = entry && Math.abs(plane.y - entry.taxiY) < 6 && plane.x <= (spot.x === entry.hold.x ? entry.startX : spot.x) + 4;
+    if (spot.runway && entry) {
+      const path = new Phaser.Curves.Path(plane.x, plane.y);
+      if (Math.abs(plane.y - entry.taxiY) < 6 && plane.x <= entry.startX) {
+        lineTo(path, entry.startX, entry.taxiY);
+        append(path, pathFromSvg(entry.d));
+      } else if (!plane.spot?.runway) {
+        // Continue down the entry when the next waiting plane advances onto the runway.
+        const points = pathFromSvg(entry.d).getSpacedPoints(48);
+        const closest = points.reduce((best, point, index) =>
+          Phaser.Math.Distance.Between(plane.x, plane.y, point.x, point.y) < Phaser.Math.Distance.Between(plane.x, plane.y, points[best].x, points[best].y) ? index : best, 0);
+        addPoints(path, points.slice(closest + 1));
+      }
+      lineTo(path, spot.x, spot.y);
+      return { path, steer: true };
+    }
+    const onEntry = entry && Math.abs(spot.y - entry.taxiY) >= 6;
+    const onItsTaxiway = entry && Math.abs(plane.y - entry.taxiY) < 6 && plane.x <= (onEntry ? entry.startX : spot.x) + 4;
     if (spot.kind === "queue" && entry && onItsTaxiway) {
       const path = new Phaser.Curves.Path(plane.x, plane.y);
-      if (spot.x === entry.hold.x && spot.y === entry.hold.y) {
+      if (onEntry) {
         path.lineTo(entry.startX, entry.taxiY);
-        append(path, pathFromSvg(entry.d, entry.hold));
+        append(path, pathFromSvg(entry.d, spot));
       } else {
         path.lineTo(spot.x, spot.y);
       }
@@ -360,16 +376,21 @@ export class AirportScene extends Phaser.Scene {
       lineTo(path, plane.x, NORTH_Y);
       pushback = path.getLength();
       taxiY = NORTH_Y;
-    } else if (from?.kind === "queue" && fromEntry && near(plane, fromEntry.hold)) {
+    } else if (from?.runway && fromEntry && near(plane, from)) {
+      const points = pathFromSvg(fromEntry.d).getSpacedPoints(32).reverse();
+      addPoints(path, points);
+      taxiY = fromEntry.taxiY;
+    } else if (from?.kind === "queue" && fromEntry && near(plane, from) && Math.abs(from.y - fromEntry.taxiY) >= 6) {
       const toTaxiY = spot.kind === "parked" ? NORTH_Y : entryById(spot.entry)?.taxiY ?? fromEntry.taxiY;
       if (toTaxiY !== fromEntry.taxiY) {
         // over the runway: on down this entry, then up its partner on the other side
+        lineTo(path, fromEntry.hold.x, fromEntry.hold.y);
         addPoints(path, restOfEntry(fromEntry).getSpacedPoints(12));
         addPoints(path, pathFromSvg(entryById(PARTNER[fromEntry.id])!.d).getSpacedPoints(24).reverse());
         taxiY = toTaxiY;
       } else {
         // turn back up the entry onto its taxiway
-        addPoints(path, pathFromSvg(fromEntry.d, fromEntry.hold).getSpacedPoints(24).reverse());
+        addPoints(path, pathFromSvg(fromEntry.d, from).getSpacedPoints(24).reverse());
         taxiY = fromEntry.taxiY;
       }
     } else if (Math.abs(plane.y - NORTH_Y) < 6 || Math.abs(plane.y - SOUTH_Y) < 6) {
@@ -384,9 +405,13 @@ export class AirportScene extends Phaser.Scene {
     if (spot.kind === "parked") {
       lineTo(path, spot.x, NORTH_Y);
       lineTo(path, spot.x, spot.y);
-    } else if (toEntry && near(spot, toEntry.hold)) {
+    } else if (toEntry && spot.runway) {
       lineTo(path, toEntry.startX, toEntry.taxiY);
-      append(path, pathFromSvg(toEntry.d, toEntry.hold));
+      append(path, pathFromSvg(toEntry.d));
+      lineTo(path, spot.x, spot.y);
+    } else if (toEntry && Math.abs(spot.y - toEntry.taxiY) >= 6) {
+      lineTo(path, toEntry.startX, toEntry.taxiY);
+      append(path, pathFromSvg(toEntry.d, spot));
     } else {
       lineTo(path, spot.x, targetY);
     }
@@ -411,7 +436,9 @@ export class AirportScene extends Phaser.Scene {
   private moveTo(plane: PlaneObject, spot: Spot) {
     this.stopMoving(plane);
     const toOrFromStand = spot.kind === "parked" || plane.spot?.kind === "parked";
-    const ground = toOrFromStand && plane.alpha > 0 ? this.groundRoute(plane, spot) : null;
+    const changesEntry = spot.kind === "queue" && plane.spot?.kind === "queue" && spot.entry !== plane.spot.entry;
+    const leavesRunway = plane.spot?.runway && !spot.runway;
+    const ground = (toOrFromStand || changesEntry || leavesRunway) && plane.alpha > 0 ? this.groundRoute(plane, spot) : null;
     if (toOrFromStand && !ground && plane.alpha > 0) return this.arriveAtStand(plane, spot);
     const { path, steer } = ground ? { path: ground.path, steer: true } : this.route(plane, spot);
     const pushback = ground?.pushback ?? 0;
@@ -479,7 +506,7 @@ export class AirportScene extends Phaser.Scene {
 
   positionOf(session: string) {
     const plane = this.planes.get(session);
-    return plane ? { x: plane.x, y: plane.y } : null;
+    return plane ? { x: plane.x, y: plane.y, heading: plane.body.angle, departing: Boolean(plane.departing) } : null;
   }
 
   /** The way to the runway from where the plane is, then the roll east and the climb out. */
@@ -487,12 +514,19 @@ export class AirportScene extends Phaser.Scene {
     const entry = entryById(plane.spot?.entry);
     const path = new Phaser.Curves.Path(plane.x, plane.y);
     let pushback = 0;
-    if (entry && plane.spot?.kind === "queue") {
-      const atHold = Math.abs(plane.x - entry.hold.x) < 4 && Math.abs(plane.y - entry.hold.y) < 4;
-      if (atHold) append(path, restOfEntry(entry));
-      else {
-        path.lineTo(entry.startX, entry.taxiY);
+    if (Math.abs(plane.y - RUNWAY_Y) < 6) {
+      // Already lined up for takeoff; continue straight along the runway.
+    } else if (entry && plane.spot?.kind === "queue") {
+      if (Math.abs(plane.y - entry.taxiY) < 6 && plane.x <= entry.startX) {
+        lineTo(path, entry.startX, entry.taxiY);
         append(path, pathFromSvg(entry.d));
+      } else {
+        // It may already be partway down the entry, including while being promoted
+        // onto the runway. Continue from here instead of turning back to its start.
+        const points = pathFromSvg(entry.d).getSpacedPoints(48);
+        const closest = points.reduce((best, point, index) =>
+          Phaser.Math.Distance.Between(plane.x, plane.y, point.x, point.y) < Phaser.Math.Distance.Between(plane.x, plane.y, points[best].x, points[best].y) ? index : best, 0);
+        addPoints(path, points.slice(closest + 1));
       }
     } else if (plane.spot?.kind === "parked") {
       // push back onto the north taxiway, then taxi east to the next entry
