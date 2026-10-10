@@ -13,3 +13,6 @@ Config.setVideoImageFormat("jpeg");
 Config.setOverwriteOutput(true);
 Config.setDefaultPremountInSeconds(2);
 Config.overrideBundlerConfig(enableTailwind);
+Config.setExperimentalTracksEnabled(true);
+Config.setShowPremounting(false);
+Config.setExperimentalSequenceActivityEnabled(true);

@@ -1,0 +1,27 @@
+{
+  "file": "public/webcam1791640657618.mp4",
+  "size": 378423993,
+  "parts": [
+    {
+      "file": "media/source-footage/webcam1791640657618.mp4.part-001",
+      "size": 100663296,
+      "sha256": "7635ea5c33601184c6503c4333a3253e4e6d5320296a7fb934217b65dd924467"
+    },
+    {
+      "file": "media/source-footage/webcam1791640657618.mp4.part-002",
+      "size": 100663296,
+      "sha256": "bdeb5e556664e570d3f5fd786702c3ca939e47802a143797999a1f971c2e2a1b"
+    },
+    {
+      "file": "media/source-footage/webcam1791640657618.mp4.part-003",
+      "size": 100663296,
+      "sha256": "41718a5967634974142961dd61e6f938c7c9a7f4f2dc8562317866833d3ece06"
+    },
+    {
+      "file": "media/source-footage/webcam1791640657618.mp4.part-004",
+      "size": 76434105,
+      "sha256": "e6a6b26194d8dd8915c1a7770772f1a78b0fde37457d900ec2a88760ce6b9985"
+    }
+  ],
+  "sha256": "d625716fe7bbcff36146dd398d631ce3df0c001ee0d0a3e5c01839d955babefa"
+}

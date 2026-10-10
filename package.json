@@ -6,11 +6,17 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "@mediabunny/server": "1.61.3",
+    "@remotion/captions": "file:../remotion/packages/captions",
     "@remotion/cli": "file:///Users/jonathanburger/remotion/packages/cli",
+    "@remotion/media": "file:../remotion/packages/media",
+    "@remotion/tailwind-v4": "file:///Users/jonathanburger/remotion/packages/tailwind-v4",
+    "@remotion/whisper-webgpu": "file:../remotion/packages/whisper-webgpu",
+    "mediabunny": "1.61.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "file:///Users/jonathanburger/remotion/packages/core",
-    "@remotion/tailwind-v4": "file:///Users/jonathanburger/remotion/packages/tailwind-v4",
     "tailwindcss": "4.0.0"
   },
   "devDependencies": {
@@ -22,7 +28,10 @@
     "typescript": "5.9.3"
   },
   "scripts": {
+    "restore-media": "node scripts/restore-media.mjs",
+    "predev": "npm run restore-media",
     "dev": "remotion studio",
+    "prebuild": "npm run restore-media",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"

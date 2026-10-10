@@ -5,3 +5,7 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# Restored from lossless parts in media/source-footage/ (Entire's file limit).
+/public/webcam1791640657618.mp4
+/public/*.restore-tmp-*
