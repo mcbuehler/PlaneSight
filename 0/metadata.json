@@ -1,0 +1,127 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4K94FFDJKCNBWNMDDE8KRD8",
+  "session_id": "6af3f9a5-2792-48ff-b45f-266f33e226eb",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-10T16:08:02.116324Z",
+  "branch": "fix/runway-lines",
+  "checkpoints_count": 4,
+  "save_step_count": 2,
+  "files_touched": [
+    "app/src/airfield.ts"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-opus-5-5",
+  "turn_id": "ce4f222b1b3b",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 966,
+    "cache_creation_tokens": 848791,
+    "cache_read_tokens": 139620983,
+    "output_tokens": 414646,
+    "api_call_count": 479,
+    "subagent_tokens": {
+      "input_tokens": 0,
+      "cache_creation_tokens": 0,
+      "cache_read_tokens": 0,
+      "output_tokens": 0,
+      "api_call_count": 0
+    }
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01NZQYKihSmXt98Fe5KYmGoc",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "mattpocock-skills:grilling"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "67a033766d4d",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 28,
+        "end": 29,
+        "entry_ids": [
+          "0b002032-ae75-4185-9303-ad5db8150aba"
+        ],
+        "tool_use_id": "toolu_01NZQYKihSmXt98Fe5KYmGoc"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01NZQYKihSmXt98Fe5KYmGoc"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: mattpocock-skills:grilling",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_011ADHhjvcafDba39NZ2v3GR",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "frontend-design:frontend-design"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "67a033766d4d",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 563,
+        "end": 564,
+        "entry_ids": [
+          "390cea86-ead8-40d9-a365-efdef1c7517f"
+        ],
+        "tool_use_id": "toolu_011ADHhjvcafDba39NZ2v3GR"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_011ADHhjvcafDba39NZ2v3GR"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: frontend-design:frontend-design",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 14
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-10T16:08:01.612082Z",
+    "agent_lines": 12,
+    "agent_removed": 3,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 12,
+    "total_lines_changed": 15,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 14,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 26,
+      "agent_lines_removed": 3
+    }
+  ]
+}
