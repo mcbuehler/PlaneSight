@@ -63,3 +63,7 @@ can we clean up the repo in general. we dont need to run remotion with the dev c
 <status>failed</status>
 <summary>Background command "Start Plane Sight again through the up command" failed with exit code 143</summary>
 </task-notification>
+
+---
+
+yes
