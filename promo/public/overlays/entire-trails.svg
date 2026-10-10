@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="906" height="144" viewBox="0 0 906 144" role="img" aria-label="Entire Trails, wink">
+<title>Entire Trails 😉</title>
+<!-- Letter outlines from Silkscreen Regular, licensed under SIL Open Font License. -->
+<path d="M16 8H890V16H898V128H890V136H16V128H8V16H16Z" fill="#142921" stroke="#f5edcd" stroke-width="4"/>
+<path d="M125 0V625H500V500H250V375H500V250H250V125H500V0Z" transform="translate(30.000 104) scale(0.091429 -0.091429)" fill="#ffd35b"/>
+<path d="M125 0V625H250V500H375V375H500V250H625V625H750V0H625V125H500V250H375V375H250V0Z" transform="translate(87.143 104) scale(0.091429 -0.091429)" fill="#ffd35b"/>
+<path d="M250 0V500H125V625H500V500H375V0Z" transform="translate(167.143 104) scale(0.091429 -0.091429)" fill="#ffd35b"/>
+<path d="M125 0V625H250V0Z" transform="translate(224.286 104) scale(0.091429 -0.091429)" fill="#ffd35b"/>
+<path d="M125 0V625H500V500H625V375H500V125H625V0H500V125H375V250H250V0ZM250 375H495V500H250Z" transform="translate(258.571 104) scale(0.091429 -0.091429)" fill="#ffd35b"/>
+<path d="M125 0V625H500V500H250V375H500V250H250V125H500V0Z" transform="translate(327.143 104) scale(0.091429 -0.091429)" fill="#ffd35b"/>
+<path d="" transform="translate(384.286 104) scale(0.091429 -0.091429)" fill="#fff5d2"/>
+<path d="M250 0V500H125V625H500V500H375V0Z" transform="translate(430.000 104) scale(0.091429 -0.091429)" fill="#fff5d2"/>
+<path d="M125 0V625H500V500H625V375H500V125H625V0H500V125H375V250H250V0ZM250 375H495V500H250Z" transform="translate(487.143 104) scale(0.091429 -0.091429)" fill="#fff5d2"/>
+<path d="M125 0V500H250V625H500V500H625V0H500V250H250V0ZM250 375H500V495H250Z" transform="translate(555.714 104) scale(0.091429 -0.091429)" fill="#fff5d2"/>
+<path d="M125 0V625H250V0Z" transform="translate(624.286 104) scale(0.091429 -0.091429)" fill="#fff5d2"/>
+<path d="M125 0V625H250V125H500V0Z" transform="translate(658.571 104) scale(0.091429 -0.091429)" fill="#fff5d2"/>
+<path d="M250 500V625H625V500ZM500 125V250H250V375H125V500H250V375H500V250H625V125ZM125 0V125H500V0Z" transform="translate(715.714 104) scale(0.091429 -0.091429)" fill="#fff5d2"/>
+<g transform="translate(810 40)" shape-rendering="crispEdges"><path d="M16 0H48V8H56V16H64V48H56V56H48V64H16V56H8V48H0V16H8V8H16Z" fill="#ffd35b"/><path d="M16 16H24V32H16ZM40 24H56V32H40ZM16 40H24V48H16ZM24 48H48V56H24ZM48 40H56V48H48Z" fill="#142921"/><path d="M16 8H24V16H16Z" fill="#fff5d2"/></g>
+</svg>
