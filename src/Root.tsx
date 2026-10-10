@@ -3,6 +3,7 @@ import { Composition, Folder } from "remotion";
 import { PlaneSightPromo } from "./Composition";
 import { PlaneSightLogo } from "./PlaneSightLogo";
 import { CloudCodePlane, OpenAirPlane, PixelAirlines } from "./PixelAirlines";
+import { PixelAirport } from "./PixelAirport";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -24,6 +25,14 @@ export const RemotionRoot: React.FC = () => {
         height={720}
       />
       <Folder name="Pixel-Airlines">
+        <Composition
+          id="PixelAirport"
+          component={PixelAirport}
+          durationInFrames={180}
+          fps={30}
+          width={1280}
+          height={720}
+        />
         <Composition
           id="PixelAirlines"
           component={PixelAirlines}
