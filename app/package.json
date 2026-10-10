@@ -1,0 +1,22 @@
+{
+  "name": "plane-sight-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Plane Sight: a live pixel-art airport over the coding agents running in Herdr",
+  "scripts": {
+    "server": "node --env-file-if-exists=../.env --env-file-if-exists=.env server/server.mjs",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "start": "npm run build && npm run server",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/genai": "2.28.0",
+    "phaser": "4.2.1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vite": "8.3.1"
+  }
+}
