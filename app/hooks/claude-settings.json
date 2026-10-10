@@ -1,0 +1,173 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude",
+            "timeout": 5,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude",
+            "timeout": 5,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude",
+            "timeout": 5,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      },
+      {
+        "matcher": "AskUserQuestion|ExitPlanMode",
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude/question",
+            "timeout": 3600,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude/permission",
+            "timeout": 3600,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude",
+            "timeout": 5,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude",
+            "timeout": 5,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude",
+            "timeout": 5,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude",
+            "timeout": 5,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://127.0.0.1:7777/hook/claude",
+            "timeout": 2,
+            "headers": {
+              "X-Herdr-Pane": "$HERDR_PANE_ID"
+            },
+            "allowedEnvVars": [
+              "HERDR_PANE_ID"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
