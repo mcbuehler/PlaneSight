@@ -52,8 +52,9 @@ Allowed proposal actions by kind:
 
 Rules:
 - Propose "deny" for destructive or irreversible actions (deleting data, force pushes, publishing, spending money) and set risk "high".
-- If a collision is reported, use category "collision" and propose "deny" with this wording:
+- If a collision is reported for a pending edit, use category "collision" and propose "deny" with this wording:
   "The user denied this from their dashboard. Another agent is editing <file> right now. Do not retry. Stop and wait for the user."
+- For a landed agent with a shared-file collision, use category "collision" and action "prompt" asking it to explain the overlapping changes and wait for review. This is a shared-file warning, not proof of a merge conflict. Never use "deny" for a landed agent.
 - For a landed agent, a good next prompt is concrete: run the tests, fix what the agent itself flagged, or open a PR.
 - Be specific. Name files and commands. No filler.`;
 
@@ -76,6 +77,9 @@ function fallbackCard(item) {
     reasoning: "Heuristic card (Gemini is not configured).",
   };
   if (item.collision) {
+    if (item.kind === "landed") return { ...base, category: "collision", risk: "high",
+      summary: `Shares edits to ${item.collision.file} with ${item.collision.other}. Review both branches together.`,
+      proposal: { action: "prompt", text: `Explain your changes to ${item.collision.file} and the dependency on ${item.collision.other}. Do not merge; wait for review.` } };
     return { ...base, category: "collision", risk: "high", summary: `Wants to edit ${item.collision.file}, which ${item.collision.other} is editing.`,
       proposal: { action: "deny", text: `The user denied this from their dashboard. Another agent is editing ${item.collision.file} right now. Do not retry. Stop and wait for the user.` } };
   }

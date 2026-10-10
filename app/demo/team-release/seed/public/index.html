@@ -1,0 +1,5 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>CrewBoard</title>
+<style>body{font:18px system-ui;max-width:800px;margin:60px auto;color:#182934}header{color:#326d61}li{padding:12px}small{color:#627782}</style></head>
+<body><header>CrewBoard • release candidate</header><h1>Your projects</h1><p>Workspace: crew</p><ul id="projects"></ul>
+<script type="module">const data=await fetch('/api/projects').then(r=>r.json());for(const p of data.items){const li=document.createElement('li');li.textContent=p.name+' — '+p.workspaceId;document.querySelector('#projects').append(li);}</script>
+</body></html>

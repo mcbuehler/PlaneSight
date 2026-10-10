@@ -1,0 +1,42 @@
+[
+  {
+    "id": "landing-page",
+    "title": "Landing page",
+    "prompt": "Low priority launch polish: improve src/landing.js copy for a small-team project dashboard; keep its object API. Add a focused test. This cosmetic task is older than the other tasks, but must not outrank privacy or release blockers. Work only in this worktree. Read the existing files first. Make a small reviewable patch, use Node built-in tests, and report the actual results. No dependencies, commits, merges, push, deployment, background agents, or changes to other worktrees. Stop when ready for human review."
+  },
+  {
+    "id": "dashboard",
+    "title": "Dashboard",
+    "prompt": "Release feature: improve src/dashboard.js to expose the current workspace label and whether the user can invite teammates (owner/admin only). Use the existing visibleProjects helper. Add dashboard tests using own-workspace fixtures. Authentication owns the workspace-isolation fix and API changes its options; state those dependencies in your final review. Do not edit src/permissions.js. Work only in this worktree. Read the existing files first. Make a small reviewable patch, use Node built-in tests, and report the actual results. No dependencies, commits, merges, push, deployment, background agents, or changes to other worktrees. Stop when ready for human review."
+  },
+  {
+    "id": "authentication",
+    "title": "Authentication",
+    "prompt": "URGENT SECURITY RELEASE BLOCKER: visibleProjects in src/permissions.js currently leaks projects across workspaces. Fix workspace isolation, fail closed for a missing user/workspace, and preserve archive filtering. Add regression tests covering another workspace and absent identity. This blocks the API and dashboard release. API is concurrently editing the same helper on another branch: explain the shared-file dependency and do not merge their work. Work only in this worktree. Read the existing files first. Make a small reviewable patch, use Node built-in tests, and report the actual results. No dependencies, commits, merges, push, deployment, background agents, or changes to other worktrees. Stop when ready for human review."
+  },
+  {
+    "id": "billing",
+    "title": "Billing",
+    "prompt": "Implement paid-seat counting in src/billing.js, but first inspect the code and ask the user one real product question using AskUserQuestion: should pending invitations count as paid seats, or only accepted active members? Recommend only active members. Include choices for active members only and active plus pending invites. Wait for that answer before writing code. Once answered, implement the chosen policy with a test. Work only in this worktree. Read the existing files first. Make a small reviewable patch, use Node built-in tests, and report the actual results. No dependencies, commits, merges, push, deployment, background agents, or changes to other worktrees. Stop when ready for human review."
+  },
+  {
+    "id": "api",
+    "title": "API",
+    "prompt": "Release feature: add bounded pagination (offset default 0, limit default 20, max 100) and an includeArchived option to listProjects. Extend the shared visibleProjects(user, projects, options = {}) in src/permissions.js for archive handling, and update src/api.js. Add pagination tests using only current-workspace fixtures. Authentication owns an urgent workspace-isolation patch on another branch: do not duplicate its fix; prominently report that release is BLOCKED until that patch is integrated. Your shared helper change overlaps theirs and needs joint review. Work only in this worktree. Read the existing files first. Make a small reviewable patch, use Node built-in tests, and report the actual results. No dependencies, commits, merges, push, deployment, background agents, or changes to other worktrees. Stop when ready for human review."
+  },
+  {
+    "id": "test-suite",
+    "title": "Test suite",
+    "prompt": "Release regression check: add test/workspace-regression.test.js proving API and dashboard never return another workspace\u2019s project, using the current user and seeded projects. Run those tests. They should expose the current missing isolation fix: do not weaken tests or edit implementation to make them pass. Report the real failures and say Authentication is the release blocker. Work only in this worktree. Read the existing files first. Make a small reviewable patch, use Node built-in tests, and report the actual results. No dependencies, commits, merges, push, deployment, background agents, or changes to other worktrees. Stop when ready for human review."
+  },
+  {
+    "id": "documentation",
+    "title": "Documentation",
+    "prompt": "Update docs/onboarding.md with a short concrete guide for inviting a teammate, owner/admin versus member roles, and accepting the email invitation. Do not invent implemented UI routes. Mention billing seat policy is awaiting a product decision. Keep it under 300 words. Work only in this worktree. Read the existing files first. Make a small reviewable patch, use Node built-in tests, and report the actual results. No dependencies, commits, merges, push, deployment, background agents, or changes to other worktrees. Stop when ready for human review."
+  },
+  {
+    "id": "accessibility",
+    "title": "Accessibility",
+    "prompt": "Fix keyboard focus cycling in src/invite-dialog.js: support forward Tab and reverse Shift+Tab, wrap within inviteFields, and handle a missing current index. Add focused tests. Keep this patch independent of billing and authentication. Work only in this worktree. Read the existing files first. Make a small reviewable patch, use Node built-in tests, and report the actual results. No dependencies, commits, merges, push, deployment, background agents, or changes to other worktrees. Stop when ready for human review."
+  }
+]

@@ -1,6 +1,6 @@
 // Plane Sight: a live airport over the coding agents in Herdr.
 // Taxiway = agents that need you, in the tower's order. Gates and stands = idle agents.
-// The grass below = agents in flight. Click a plane to answer, prompt, stop or inspect it.
+// Working agents are hidden until they need attention. Click a waiting plane to inspect it.
 import "./style.css";
 import logoUrl from "../../public/branding/plane-sight-logo.png?url";
 import { PLANE_SIZE, createAirport, screenResolution, type PlaneView, type StripView } from "./AirportScene";
